@@ -1,9 +1,10 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Wallet } from './wallet.entity';
 import { Transaction } from './transaction.entity';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class WalletService {
@@ -13,6 +14,7 @@ export class WalletService {
     @InjectRepository(Transaction)
     private transactionRepo: Repository<Transaction>,
     private dataSource: DataSource,
+    private authService: AuthService,
   ) {}
 
   async getOrCreateWallet(userId: number): Promise<Wallet> {
@@ -64,7 +66,12 @@ export class WalletService {
     }
   }
 
-  async send(userId: number, amount: number, recipient: string): Promise<{ balance: number; reference: string }> {
+  async send(userId: number, amount: number, recipient: string, pin: string): Promise<{ balance: number; reference: string }> {
+    const valid = await this.authService.verifyPin(userId, pin);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid PIN');
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -104,7 +111,12 @@ export class WalletService {
     }
   }
 
-  async withdraw(userId: number, amount: number): Promise<{ balance: number; reference: string }> {
+  async withdraw(userId: number, amount: number, pin: string): Promise<{ balance: number; reference: string }> {
+    const valid = await this.authService.verifyPin(userId, pin);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid PIN');
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

@@ -20,12 +20,12 @@ export class WalletController {
 
   @Post('send')
   send(@Body() dto: SendDto, @Req() req: any) {
-    return this.walletService.send(req.user.userId, dto.amount, dto.recipient);
+    return this.walletService.send(req.user.userId, dto.amount, dto.recipient, dto.pin);
   }
 
   @Post('withdraw')
   withdraw(@Body() dto: WithdrawDto, @Req() req: any) {
-    return this.walletService.withdraw(req.user.userId, dto.amount);
+    return this.walletService.withdraw(req.user.userId, dto.amount, dto.pin);
   }
 
   @Get('transactions')

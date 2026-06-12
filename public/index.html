@@ -16,7 +16,6 @@
       min-height: 100vh;
     }
 
-    /* ─── AUTH SCREEN ─── */
     .auth-screen {
       min-height: 100vh;
       display: flex;
@@ -33,13 +32,9 @@
       max-width: 420px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02);
     }
-    .auth-logo {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+    .auth-logo { text-align: center; margin-bottom: 32px; }
     .auth-logo .icon-box {
-      width: 64px;
-      height: 64px;
+      width: 64px; height: 64px;
       background: linear-gradient(135deg, #4f46e5, #7c3aed);
       border-radius: 18px;
       display: inline-flex;
@@ -51,211 +46,138 @@
     .auth-logo .icon-box i { font-size: 28px; color: white; }
     .auth-logo h1 { font-size: 24px; font-weight: 800; color: #1a1a2e; }
     .auth-logo p { font-size: 14px; color: #6b7280; margin-top: 4px; }
-
     .auth-tabs {
-      display: flex;
-      background: #f3f4f6;
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 24px;
+      display: flex; background: #f3f4f6; border-radius: 12px; padding: 4px; margin-bottom: 24px;
     }
     .auth-tab {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #6b7280;
-      cursor: pointer;
-      transition: all 0.2s;
+      flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px;
+      font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; transition: all 0.2s;
     }
-    .auth-tab.active {
-      background: white;
-      color: #4f46e5;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .auth-tab:hover { color: #1a1a2e; }
-
+    .auth-tab.active { background: white; color: #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .auth-form { display: flex; flex-direction: column; gap: 16px; }
     .auth-form .input-group { position: relative; }
     .auth-form .input-group i {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9ca3af;
-      font-size: 16px;
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: #9ca3af; font-size: 16px;
     }
     .auth-form input {
-      width: 100%;
-      padding: 14px 14px 14px 44px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      background: #fafafa;
+      width: 100%; padding: 14px 14px 14px 44px;
+      border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 14px;
+      font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #fafafa;
     }
-    .auth-form input:focus {
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-      background: white;
-    }
-    .auth-form input::placeholder { color: #9ca3af; }
+    .auth-form input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); background: white; }
     .auth-form button {
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: white;
-      transition: opacity 0.2s, transform 0.1s;
+      padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; transition: opacity 0.2s;
     }
     .auth-form button:hover { opacity: 0.92; }
-    .auth-form button:active { transform: scale(0.98); }
     .auth-form button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .auth-msg {
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 13px;
-      display: none;
-    }
+    .auth-msg { padding: 12px 16px; border-radius: 10px; font-size: 13px; display: none; }
     .auth-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .auth-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-
     .auth-footer { text-align: center; margin-top: 20px; font-size: 12px; color: #9ca3af; }
 
-    /* ─── DASHBOARD ─── */
-    .dashboard { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
-    .dash-header {
+    /* PIN Setup */
+    .pin-screen {
+      min-height: 100vh;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+    }
+    .pin-card {
+      background: white; border-radius: 24px; padding: 40px 32px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02);
+      text-align: center;
+    }
+    .pin-card .icon-box {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
+    }
+    .pin-card .icon-box i { font-size: 28px; color: white; }
+    .pin-card h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+    .pin-card p { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+    .pin-inputs { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
+    .pin-inputs input {
+      width: 56px; height: 64px; text-align: center; font-size: 24px; font-weight: 700;
+      border: 1.5px solid #e5e7eb; border-radius: 12px; outline: none;
+      font-family: 'Inter', sans-serif; transition: border-color 0.2s;
+    }
+    .pin-inputs input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+    .pin-card button {
+      width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; transition: opacity 0.2s;
+    }
+    .pin-card button:hover { opacity: 0.92; }
+    .pin-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pin-msg { margin-top: 12px; padding: 12px 16px; border-radius: 10px; font-size: 13px; display: none; }
+    .pin-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+    .dashboard { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
     }
     .dash-header-left { display: flex; align-items: center; gap: 12px; }
     .dash-header-left .logo-sm {
       width: 40px; height: 40px;
       background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
     .dash-header-left .logo-sm i { color: white; font-size: 18px; }
     .dash-header-left h2 { font-size: 18px; font-weight: 700; }
     .dash-header-left p { font-size: 12px; color: #6b7280; }
-    .logout-btn {
-      padding: 8px 16px;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      background: white;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
+    .dash-actions { display: flex; gap: 8px; }
+    .dash-actions button {
+      padding: 8px 16px; border: 1px solid #e5e7eb; border-radius: 10px; background: white;
+      font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer;
+      color: #6b7280; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
     }
-    .logout-btn:hover { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
-    .logout-btn i { font-size: 14px; }
+    .dash-actions button:hover { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
 
-    /* Balance Card */
     .balance-card {
       background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%);
-      border-radius: 20px;
-      padding: 24px;
-      color: white;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
+      border-radius: 20px; padding: 24px; color: white; margin-bottom: 20px;
+      position: relative; overflow: hidden;
       box-shadow: 0 8px 32px rgba(79, 70, 229, 0.25);
     }
     .balance-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -30%;
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 50%;
+      content: ''; position: absolute; top: -50%; right: -30%;
+      width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;
     }
     .balance-card::after {
-      content: '';
-      position: absolute;
-      bottom: -40%;
-      left: -20%;
-      width: 150px;
-      height: 150px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 50%;
+      content: ''; position: absolute; bottom: -40%; left: -20%;
+      width: 150px; height: 150px; background: rgba(255,255,255,0.03); border-radius: 50%;
     }
     .balance-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      position: relative;
-      z-index: 1;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 1;
     }
     .balance-top label { font-size: 13px; opacity: 0.8; font-weight: 500; }
     .balance-top .currency-badge {
-      background: rgba(255,255,255,0.15);
-      padding: 4px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
+      background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
     }
-    .balance-amount {
-      font-size: 40px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      position: relative;
-      z-index: 1;
-    }
-    .balance-amount small { font-size: 16px; font-weight: 500; opacity: 0.7; }
+    .balance-amount { font-size: 40px; font-weight: 800; letter-spacing: -1px; position: relative; z-index: 1; }
 
-    /* Quick Actions */
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
     .action-btn {
-      background: white;
-      border: none;
-      border-radius: 16px;
-      padding: 16px 8px;
-      cursor: pointer;
-      text-align: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: all 0.2s;
-      border: 1px solid #f3f4f6;
+      background: white; border: none; border-radius: 16px; padding: 16px 8px; cursor: pointer;
+      text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: all 0.2s; border: 1px solid #f3f4f6;
     }
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    }
+    .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
     .action-btn:active { transform: scale(0.96); }
     .action-btn .icon-wrap {
-      width: 48px; height: 48px;
-      border-radius: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 8px;
+      width: 48px; height: 48px; border-radius: 14px;
+      display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px;
     }
     .action-btn .icon-wrap.green { background: #ecfdf5; }
     .action-btn .icon-wrap.blue { background: #eff6ff; }
@@ -266,132 +188,55 @@
     .action-btn .icon-wrap.amber i { color: #f59e0b; }
     .action-btn span { display: block; font-size: 13px; font-weight: 600; color: #1a1a2e; }
 
-    /* Modal (Hidden by default) */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 100;
-      padding: 20px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      display: none; align-items: flex-end; justify-content: center; z-index: 100; padding: 20px;
     }
     .modal-overlay.active { display: flex; }
     .modal-sheet {
-      background: white;
-      border-radius: 24px 24px 0 0;
-      padding: 24px 20px 32px;
-      width: 100%;
-      max-width: 520px;
-      animation: slideUp 0.3s ease;
+      background: white; border-radius: 24px 24px 0 0; padding: 24px 20px 32px;
+      width: 100%; max-width: 520px; animation: slideUp 0.3s ease;
     }
     @keyframes slideUp {
       from { transform: translateY(100%); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
     .modal-sheet .modal-handle {
-      width: 36px; height: 4px;
-      background: #e5e7eb;
-      border-radius: 4px;
-      margin: 0 auto 20px;
+      width: 36px; height: 4px; background: #e5e7eb; border-radius: 4px; margin: 0 auto 20px;
     }
-    .modal-sheet h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .modal-sheet h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
     .modal-sheet .modal-sub { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
     .modal-sheet input {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      background: #fafafa;
-      margin-bottom: 12px;
-      transition: border-color 0.2s;
+      width: 100%; padding: 14px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px;
+      font-size: 14px; font-family: 'Inter', sans-serif; outline: none;
+      background: #fafafa; margin-bottom: 12px; transition: border-color 0.2s;
     }
-    .modal-sheet input:focus {
-      border-color: #4f46e5;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
-    }
+    .modal-sheet input:focus { border-color: #4f46e5; background: white; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
     .modal-sheet .modal-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      color: white;
-      transition: opacity 0.2s;
+      width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
+      font-family: 'Inter', sans-serif; cursor: pointer; color: white; transition: opacity 0.2s;
     }
     .modal-sheet .modal-btn:hover { opacity: 0.9; }
     .modal-sheet .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .modal-msg {
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      display: none;
-    }
+    .modal-msg { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
     .modal-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .modal-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .modal-cancel {
-      display: block;
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-      color: #6b7280;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      border: none;
-      background: none;
-      width: 100%;
-      padding: 8px;
+      display: block; text-align: center; margin-top: 12px; font-size: 14px; color: #6b7280;
+      cursor: pointer; font-family: 'Inter', sans-serif; border: none; background: none; width: 100%; padding: 8px;
     }
     .modal-cancel:hover { color: #1a1a2e; }
 
-    /* Transactions */
-    .tx-section {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .tx-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
+    .tx-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .tx-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .tx-header h3 { font-size: 15px; font-weight: 700; }
     .tx-header h3 i { margin-right: 8px; color: #9ca3af; }
     .tx-list { display: flex; flex-direction: column; gap: 0; }
-    .tx-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f3f4f6;
-    }
+    .tx-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
     .tx-item:last-child { border-bottom: none; }
     .tx-icon {
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 12px;
-      flex-shrink: 0;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0;
     }
     .tx-icon.deposit { background: #ecfdf5; }
     .tx-icon.send { background: #eff6ff; }
@@ -407,20 +252,15 @@
     .tx-amount.credit { color: #10b981; }
     .tx-amount.debit { color: #dc2626; }
     .tx-date { font-size: 11px; color: #9ca3af; text-align: right; margin-top: 2px; }
-    .tx-empty {
-      text-align: center;
-      padding: 32px 0;
-      color: #9ca3af;
-    }
+    .tx-empty { text-align: center; padding: 32px 0; color: #9ca3af; }
     .tx-empty i { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
     .tx-empty p { font-size: 14px; }
-
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<!-- ═══ AUTH SCREEN ═══ -->
+<!-- AUTH SCREEN -->
 <div id="authScreen" class="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
@@ -428,19 +268,16 @@
       <h1>Walleo</h1>
       <p>Send, receive & manage your money</p>
     </div>
-
     <div class="auth-tabs">
       <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
       <button class="auth-tab" id="registerTab" onclick="switchTab('register')">Register</button>
     </div>
-
     <div id="loginForm" class="auth-form">
       <div class="input-group"><i class="far fa-envelope"></i><input type="email" id="loginEmail" placeholder="Email address"></div>
       <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Password"></div>
       <button id="loginBtn" onclick="login()">Sign In</button>
       <div class="auth-msg" id="loginMsg"></div>
     </div>
-
     <div id="registerForm" class="auth-form hidden">
       <div class="input-group"><i class="fas fa-user"></i><input type="text" id="regName" placeholder="Full name"></div>
       <div class="input-group"><i class="far fa-envelope"></i><input type="email" id="regEmail" placeholder="Email address"></div>
@@ -448,15 +285,30 @@
       <button id="registerBtn" onclick="register()">Create Account</button>
       <div class="auth-msg" id="registerMsg"></div>
     </div>
-
     <div class="auth-footer">Secured with end-to-end encryption</div>
   </div>
 </div>
 
-<!-- ═══ DASHBOARD ═══ -->
+<!-- PIN SETUP SCREEN -->
+<div id="pinScreen" class="pin-screen hidden">
+  <div class="pin-card">
+    <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
+    <h1>Set Your PIN</h1>
+    <p>Create a 4-digit PIN to authorize transactions</p>
+    <div class="pin-inputs">
+      <input type="password" maxlength="1" id="pin1" oninput="movePin(1)" autofocus>
+      <input type="password" maxlength="1" id="pin2" oninput="movePin(2)">
+      <input type="password" maxlength="1" id="pin3" oninput="movePin(3)">
+      <input type="password" maxlength="1" id="pin4" oninput="movePin(4)">
+    </div>
+    <button onclick="setPin()" id="setPinBtn">Set PIN</button>
+    <div class="pin-msg" id="pinMsg"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
 <div id="dashScreen" class="hidden">
   <div class="dashboard">
-    <!-- Header -->
     <div class="dash-header">
       <div class="dash-header-left">
         <div class="logo-sm"><i class="fas fa-wallet"></i></div>
@@ -465,19 +317,20 @@
           <p id="dashUserName">Welcome back</p>
         </div>
       </div>
-      <button class="logout-btn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+      <div class="dash-actions">
+        <button onclick="openPinSetup()" title="Change PIN"><i class="fas fa-key"></i></button>
+        <button onclick="logout()"><i class="fas fa-right-from-bracket"></i></button>
+      </div>
     </div>
 
-    <!-- Balance -->
     <div class="balance-card">
       <div class="balance-top">
         <label>Available Balance</label>
-        <span class="currency-badge"><i class="fas fa-naira-sign" style="margin-right: 4px;"></i>NGN</span>
+        <span class="currency-badge"><i class="fas fa-naira-sign" style="margin-right:4px"></i>NGN</span>
       </div>
       <div class="balance-amount" id="balanceDisplay">₦0.00</div>
     </div>
 
-    <!-- Quick Actions -->
     <div class="quick-actions">
       <button class="action-btn" onclick="openModal('deposit')">
         <div class="icon-wrap green"><i class="fas fa-arrow-down"></i></div>
@@ -493,7 +346,6 @@
       </button>
     </div>
 
-    <!-- Transactions -->
     <div class="tx-section">
       <div class="tx-header">
         <h3><i class="fas fa-clock-rotate"></i> Transactions</h3>
@@ -505,7 +357,7 @@
   </div>
 </div>
 
-<!-- ═══ MODAL (Bottom Sheet) ═══ -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -520,18 +372,15 @@
 <script>
   const API = window.location.origin;
   let token = localStorage.getItem('token');
+  let currentAction = '';
 
-  // ─── Screen management ───
-  if (token) { showDash(); loadWallet(); }
-  else showAuth();
+  if (token) { showSection('dash'); loadWallet(); }
+  else showSection('auth');
 
-  function showAuth() {
-    document.getElementById('authScreen').classList.remove('hidden');
-    document.getElementById('dashScreen').classList.add('hidden');
-  }
-  function showDash() {
-    document.getElementById('authScreen').classList.add('hidden');
-    document.getElementById('dashScreen').classList.remove('hidden');
+  function showSection(section) {
+    document.getElementById('authScreen').classList.toggle('hidden', section !== 'auth');
+    document.getElementById('pinScreen').classList.toggle('hidden', section !== 'pin');
+    document.getElementById('dashScreen').classList.toggle('hidden', section !== 'dash');
   }
 
   function switchTab(tab) {
@@ -541,7 +390,6 @@
     document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
   }
 
-  // ─── Auth helpers ───
   function showAuthMsg(id, text, type) {
     const el = document.getElementById(id);
     el.textContent = text;
@@ -568,7 +416,7 @@
     try {
       const data = await api('POST', '/auth/register', { name, email, password });
       token = data.token; localStorage.setItem('token', token); localStorage.setItem('userName', data.user.name);
-      showDash(); loadWallet();
+      showSection('pin');
     } catch (e) { showAuthMsg('registerMsg', e.message, 'error'); }
     btn.disabled = false;
   }
@@ -581,7 +429,7 @@
     try {
       const data = await api('POST', '/auth/login', { email, password });
       token = data.token; localStorage.setItem('token', token); localStorage.setItem('userName', data.user.name);
-      showDash(); loadWallet();
+      showSection('dash'); loadWallet();
     } catch (e) { showAuthMsg('loginMsg', e.message, 'error'); }
     btn.disabled = false;
   }
@@ -589,10 +437,35 @@
   function logout() {
     token = null; localStorage.removeItem('token'); localStorage.removeItem('userName');
     document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = '';
-    showAuth();
+    showSection('auth');
   }
 
-  // ─── Wallet ───
+  // PIN
+  function movePin(index) {
+    const next = document.getElementById('pin' + (index + 1));
+    if (next && document.getElementById('pin' + index).value.length === 1) next.focus();
+  }
+
+  async function setPin() {
+    const pin = [1,2,3,4].map(i => document.getElementById('pin' + i).value).join('');
+    if (pin.length !== 4) { document.getElementById('pinMsg').textContent = 'Enter all 4 digits'; document.getElementById('pinMsg').className = 'pin-msg error'; return; }
+    const btn = document.getElementById('setPinBtn'); btn.disabled = true;
+    try {
+      await api('POST', '/auth/set-pin', { pin });
+      [1,2,3,4].forEach(i => document.getElementById('pin' + i).value = '');
+      showSection('dash'); loadWallet();
+    } catch (e) {
+      document.getElementById('pinMsg').textContent = e.message;
+      document.getElementById('pinMsg').className = 'pin-msg error';
+    }
+    btn.disabled = false;
+  }
+
+  function openPinSetup() {
+    showSection('pin');
+  }
+
+  // Wallet
   async function loadWallet() {
     document.getElementById('dashUserName').textContent = 'Welcome back, ' + (localStorage.getItem('userName') || 'User');
     refreshBalance(); refreshTx();
@@ -636,9 +509,7 @@
     } catch (e) { if (e.message === 'Unauthorized') logout(); }
   }
 
-  // ─── Modal ───
-  let currentAction = '';
-
+  // Modal
   function openModal(action) {
     currentAction = action;
     const overlay = document.getElementById('modalOverlay');
@@ -654,12 +525,12 @@
       body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" style="background:#10b981" id="modalActionBtn" onclick="executeAction()">Deposit</button>`;
     } else if (action === 'send') {
       title.innerHTML = '<i class="fas fa-paper-plane" style="color:#3b82f6"></i> Send Money';
-      sub.textContent = 'Transfer to another person';
-      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name"><button class="modal-btn" style="background:#3b82f6" id="modalActionBtn" onclick="executeAction()">Send</button>`;
+      sub.textContent = 'Enter your PIN to authorize';
+      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" style="background:#3b82f6" id="modalActionBtn" onclick="executeAction()">Send</button>`;
     } else if (action === 'withdraw') {
       title.innerHTML = '<i class="fas fa-arrow-up" style="color:#f59e0b"></i> Withdraw';
-      sub.textContent = 'Withdraw money from your wallet';
-      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" style="background:#f59e0b" id="modalActionBtn" onclick="executeAction()">Withdraw</button>`;
+      sub.textContent = 'Enter your PIN to authorize';
+      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" style="background:#f59e0b" id="modalActionBtn" onclick="executeAction()">Withdraw</button>`;
     }
     overlay.classList.add('active');
   }
@@ -688,15 +559,20 @@
         showModalMsg('Deposited ₦' + amount.toLocaleString() + ' successfully', 'success');
       } else if (currentAction === 'send') {
         const recipient = document.getElementById('modalRecipient').value.trim();
+        const pin = document.getElementById('modalPin').value;
         if (!recipient) { showModalMsg('Enter a recipient name', 'error'); btn.disabled = false; return; }
-        const data = await api('POST', '/wallet/send', { amount, recipient });
+        if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; return; }
+        const data = await api('POST', '/wallet/send', { amount, recipient, pin });
         showModalMsg('Sent ₦' + amount.toLocaleString() + ' to ' + recipient, 'success');
       } else if (currentAction === 'withdraw') {
-        const data = await api('POST', '/wallet/withdraw', { amount });
+        const pin = document.getElementById('modalPin').value;
+        if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; return; }
+        const data = await api('POST', '/wallet/withdraw', { amount, pin });
         showModalMsg('Withdrew ₦' + amount.toLocaleString() + ' successfully', 'success');
       }
       document.getElementById('modalAmount').value = '';
       if (document.getElementById('modalRecipient')) document.getElementById('modalRecipient').value = '';
+      if (document.getElementById('modalPin')) document.getElementById('modalPin').value = '';
       refreshBalance(); refreshTx();
     } catch (e) { showModalMsg(e.message, 'error'); }
     btn.disabled = false;

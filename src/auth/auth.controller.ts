@@ -1,6 +1,7 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, SetPinDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,5 +15,11 @@ export class AuthController {
   @Post('login')
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.password);
+  }
+
+  @Post('set-pin')
+  @UseGuards(AuthGuard('jwt'))
+  setPin(@Body() dto: SetPinDto, @Req() req: any) {
+    return this.authService.setPin(req.user.userId, dto.pin);
   }
 }

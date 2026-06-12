@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -48,5 +48,26 @@ export class AuthService {
       token,
       user: { id: user.id, name: user.name, email: user.email },
     };
+  }
+
+  async setPin(userId: number, pin: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const hashedPin = await bcrypt.hash(pin, 10);
+    user.pin = hashedPin;
+    await this.userRepo.save(user);
+
+    return { message: 'PIN set successfully' };
+  }
+
+  async verifyPin(userId: number, pin: string): Promise<boolean> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user || !user.pin) {
+      return false;
+    }
+    return bcrypt.compare(pin, user.pin);
   }
 }
