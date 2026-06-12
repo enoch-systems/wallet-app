@@ -2,8 +2,6 @@
 
 A production-ready wallet backend built with **NestJS**, featuring user authentication (JWT), wallet management (deposit, send, withdraw), and full transaction history. Designed with clean architecture, database transactions, and input validation.
 
----
-
 ## Features
 
 - **JWT Authentication** - Register and login with bcrypt-hashed passwords
@@ -13,8 +11,6 @@ A production-ready wallet backend built with **NestJS**, featuring user authenti
 - **Database Transactions** - Atomic operations with rollback on failure
 - **Lightweight Frontend** - Clean HTML/CSS/JS UI with Font Awesome icons
 - **Modular Architecture** - Organized into auth, user, and wallet modules
-
----
 
 ## Architecture
 
@@ -33,8 +29,6 @@ A production-ready wallet backend built with **NestJS**, featuring user authenti
 +-------------------------------------------+
 ```
 
----
-
 ## Tech Stack
 
 | Package | Purpose |
@@ -49,8 +43,6 @@ A production-ready wallet backend built with **NestJS**, featuring user authenti
 | **bcrypt** | Password hashing |
 | **uuid** | Unique transaction reference IDs |
 | **@nestjs/serve-static** | Frontend file serving |
-
----
 
 ## Project Structure
 
@@ -78,8 +70,6 @@ wallet-app/
 └── package.json
 ```
 
----
-
 ## Getting Started
 
 ### Prerequisites
@@ -90,20 +80,13 @@ wallet-app/
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/enoch-systems/wallet-app.git
 cd wallet-app
-
-# Install dependencies
 npm install
-
-# Start the development server
 npm run start:dev
 ```
 
 The server starts at **http://localhost:3000**.
-
----
 
 ## API Reference
 
@@ -173,8 +156,6 @@ Authorization: Bearer YOUR_TOKEN_HERE
 { "amount": 2000 }
 ```
 
----
-
 ## Authentication Flow
 
 ```
@@ -184,8 +165,6 @@ Every wallet request includes token in Authorization header
 passport checks for token -> passport-jwt reads it -> valid? -> access granted
 No token? -> 401 Unauthorized
 ```
-
----
 
 ## Testing with Postman
 
@@ -198,8 +177,6 @@ No token? -> 401 Unauthorized
 7. **Withdraw** - `POST http://localhost:3000/wallet/withdraw` with token
 8. **Transactions** - `GET http://localhost:3000/wallet/transactions` with token
 
----
-
 ## Roadmap
 
 - [ ] PostgreSQL (production database with proper concurrency)
@@ -210,8 +187,6 @@ No token? -> 401 Unauthorized
 - [ ] Multi-currency support (USD, EUR, GBP)
 - [ ] Admin dashboard
 
----
-
 ## Key Concepts
 
 **Database Transactions:** All money-moving operations use database transactions. If any step fails (e.g., server crash), all changes are rolled back -- no lost funds.
@@ -220,18 +195,12 @@ No token? -> 401 Unauthorized
 
 **JWT Authentication:** Stateless authentication using JSON Web Tokens. No session storage needed -- the token itself contains the user's identity.
 
----
-
 ## License
 
 This project is for educational and portfolio purposes.
 
----
-
 ## Author
 
 Built by [Enoch](https://github.com/enoch-systems)
-
----
 
 *If you found this project helpful, consider giving it a star on GitHub!*
