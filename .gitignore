@@ -1,0 +1,7 @@
+node_modules/
+dist/
+wallet.db
+wallet.db-wal
+wallet.db-shm
+*.log
+.env

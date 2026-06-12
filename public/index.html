@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Walleo — NGN Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    /* ─── AUTH SCREEN ─── */
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
+    }
+    .auth-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .auth-logo .icon-box {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
+    }
+    .auth-logo .icon-box i { font-size: 28px; color: white; }
+    .auth-logo h1 { font-size: 24px; font-weight: 800; color: #1a1a2e; }
+    .auth-logo p { font-size: 14px; color: #6b7280; margin-top: 4px; }
+
+    .auth-tabs {
+      display: flex;
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      background: white;
+      color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .auth-tab:hover { color: #1a1a2e; }
+
+    .auth-form { display: flex; flex-direction: column; gap: 16px; }
+    .auth-form .input-group { position: relative; }
+    .auth-form .input-group i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 16px;
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 14px 14px 14px 44px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fafafa;
+    }
+    .auth-form input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+    .auth-form input::placeholder { color: #9ca3af; }
+    .auth-form button {
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .auth-form button:hover { opacity: 0.92; }
+    .auth-form button:active { transform: scale(0.98); }
+    .auth-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .auth-msg {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: none;
+    }
+    .auth-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .auth-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 12px; color: #9ca3af; }
+
+    /* ─── DASHBOARD ─── */
+    .dashboard { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .dash-header-left { display: flex; align-items: center; gap: 12px; }
+    .dash-header-left .logo-sm {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    .dash-header-left .logo-sm i { color: white; font-size: 18px; }
+    .dash-header-left h2 { font-size: 18px; font-weight: 700; }
+    .dash-header-left p { font-size: 12px; color: #6b7280; }
+    .logout-btn {
+      padding: 8px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: white;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
+    .logout-btn i { font-size: 14px; }
+
+    /* Balance Card */
+    .balance-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%);
+      border-radius: 20px;
+      padding: 24px;
+      color: white;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(79, 70, 229, 0.25);
+    }
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .balance-card::after {
+      content: '';
+      position: absolute;
+      bottom: -40%;
+      left: -20%;
+      width: 150px;
+      height: 150px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 50%;
+    }
+    .balance-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .balance-top label { font-size: 13px; opacity: 0.8; font-weight: 500; }
+    .balance-top .currency-badge {
+      background: rgba(255,255,255,0.15);
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .balance-amount {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      position: relative;
+      z-index: 1;
+    }
+    .balance-amount small { font-size: 16px; font-weight: 500; opacity: 0.7; }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .action-btn {
+      background: white;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 8px;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: all 0.2s;
+      border: 1px solid #f3f4f6;
+    }
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    .action-btn:active { transform: scale(0.96); }
+    .action-btn .icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .action-btn .icon-wrap.green { background: #ecfdf5; }
+    .action-btn .icon-wrap.blue { background: #eff6ff; }
+    .action-btn .icon-wrap.amber { background: #fffbeb; }
+    .action-btn .icon-wrap i { font-size: 20px; }
+    .action-btn .icon-wrap.green i { color: #10b981; }
+    .action-btn .icon-wrap.blue i { color: #3b82f6; }
+    .action-btn .icon-wrap.amber i { color: #f59e0b; }
+    .action-btn span { display: block; font-size: 13px; font-weight: 600; color: #1a1a2e; }
+
+    /* Modal (Hidden by default) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-sheet {
+      background: white;
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px 32px;
+      width: 100%;
+      max-width: 520px;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-sheet .modal-handle {
+      width: 36px; height: 4px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      margin: 0 auto 20px;
+    }
+    .modal-sheet h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .modal-sheet .modal-sub { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+    .modal-sheet input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      background: #fafafa;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .modal-sheet input:focus {
+      border-color: #4f46e5;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .modal-sheet .modal-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      color: white;
+      transition: opacity 0.2s;
+    }
+    .modal-sheet .modal-btn:hover { opacity: 0.9; }
+    .modal-sheet .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-msg {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: none;
+    }
+    .modal-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .modal-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .modal-cancel {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #6b7280;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      border: none;
+      background: none;
+      width: 100%;
+      padding: 8px;
+    }
+    .modal-cancel:hover { color: #1a1a2e; }
+
+    /* Transactions */
+    .tx-section {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .tx-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .tx-header h3 { font-size: 15px; font-weight: 700; }
+    .tx-header h3 i { margin-right: 8px; color: #9ca3af; }
+    .tx-list { display: flex; flex-direction: column; gap: 0; }
+    .tx-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    .tx-icon.deposit { background: #ecfdf5; }
+    .tx-icon.send { background: #eff6ff; }
+    .tx-icon.withdraw { background: #fffbeb; }
+    .tx-icon.deposit i { color: #10b981; font-size: 16px; }
+    .tx-icon.send i { color: #3b82f6; font-size: 16px; }
+    .tx-icon.withdraw i { color: #f59e0b; font-size: 16px; }
+    .tx-info { flex: 1; }
+    .tx-info .tx-type { font-size: 14px; font-weight: 600; }
+    .tx-info .tx-ref { font-size: 11px; color: #9ca3af; font-family: monospace; margin-top: 2px; }
+    .tx-info .tx-counterparty { font-size: 12px; color: #6b7280; }
+    .tx-amount { font-weight: 700; font-size: 15px; text-align: right; }
+    .tx-amount.credit { color: #10b981; }
+    .tx-amount.debit { color: #dc2626; }
+    .tx-date { font-size: 11px; color: #9ca3af; text-align: right; margin-top: 2px; }
+    .tx-empty {
+      text-align: center;
+      padding: 32px 0;
+      color: #9ca3af;
+    }
+    .tx-empty i { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+    .tx-empty p { font-size: 14px; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ AUTH SCREEN ═══ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="icon-box"><i class="fas fa-wallet"></i></div>
+      <h1>Walleo</h1>
+      <p>Send, receive & manage your money</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="registerTab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <div id="loginForm" class="auth-form">
+      <div class="input-group"><i class="far fa-envelope"></i><input type="email" id="loginEmail" placeholder="Email address"></div>
+      <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Password"></div>
+      <button id="loginBtn" onclick="login()">Sign In</button>
+      <div class="auth-msg" id="loginMsg"></div>
+    </div>
+
+    <div id="registerForm" class="auth-form hidden">
+      <div class="input-group"><i class="fas fa-user"></i><input type="text" id="regName" placeholder="Full name"></div>
+      <div class="input-group"><i class="far fa-envelope"></i><input type="email" id="regEmail" placeholder="Email address"></div>
+      <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="regPassword" placeholder="Password (min 6 characters)"></div>
+      <button id="registerBtn" onclick="register()">Create Account</button>
+      <div class="auth-msg" id="registerMsg"></div>
+    </div>
+
+    <div class="auth-footer">Secured with end-to-end encryption</div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashScreen" class="hidden">
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="dash-header">
+      <div class="dash-header-left">
+        <div class="logo-sm"><i class="fas fa-wallet"></i></div>
+        <div>
+          <h2>Walleo</h2>
+          <p id="dashUserName">Welcome back</p>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Logout</button>
+    </div>
+
+    <!-- Balance -->
+    <div class="balance-card">
+      <div class="balance-top">
+        <label>Available Balance</label>
+        <span class="currency-badge"><i class="fas fa-naira-sign" style="margin-right: 4px;"></i>NGN</span>
+      </div>
+      <div class="balance-amount" id="balanceDisplay">₦0.00</div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="action-btn" onclick="openModal('deposit')">
+        <div class="icon-wrap green"><i class="fas fa-arrow-down"></i></div>
+        <span>Deposit</span>
+      </button>
+      <button class="action-btn" onclick="openModal('send')">
+        <div class="icon-wrap blue"><i class="fas fa-paper-plane"></i></div>
+        <span>Send</span>
+      </button>
+      <button class="action-btn" onclick="openModal('withdraw')">
+        <div class="icon-wrap amber"><i class="fas fa-arrow-up"></i></div>
+        <span>Withdraw</span>
+      </button>
+    </div>
+
+    <!-- Transactions -->
+    <div class="tx-section">
+      <div class="tx-header">
+        <h3><i class="fas fa-clock-rotate"></i> Transactions</h3>
+      </div>
+      <div id="txList" class="tx-list">
+        <div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL (Bottom Sheet) ═══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h2 id="modalTitle"></h2>
+    <p class="modal-sub" id="modalSub"></p>
+    <div id="modalBody"></div>
+    <div class="modal-msg" id="modalMsg"></div>
+    <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+  const API = window.location.origin;
+  let token = localStorage.getItem('token');
+
+  // ─── Screen management ───
+  if (token) { showDash(); loadWallet(); }
+  else showAuth();
+
+  function showAuth() {
+    document.getElementById('authScreen').classList.remove('hidden');
+    document.getElementById('dashScreen').classList.add('hidden');
+  }
+  function showDash() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('dashScreen').classList.remove('hidden');
+  }
+
+  function switchTab(tab) {
+    document.getElementById('loginTab').className = 'auth-tab' + (tab === 'login' ? ' active' : '');
+    document.getElementById('registerTab').className = 'auth-tab' + (tab === 'register' ? ' active' : '');
+    document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+  }
+
+  // ─── Auth helpers ───
+  function showAuthMsg(id, text, type) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'auth-msg ' + type;
+    setTimeout(() => { el.className = 'auth-msg'; }, 5000);
+  }
+
+  async function api(method, path, body) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const res = await fetch(API + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Request failed');
+    return data;
+  }
+
+  async function register() {
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    if (!name || !email || !password) return showAuthMsg('registerMsg', 'Fill all fields', 'error');
+    if (password.length < 6) return showAuthMsg('registerMsg', 'Password must be at least 6 characters', 'error');
+    const btn = document.getElementById('registerBtn'); btn.disabled = true;
+    try {
+      const data = await api('POST', '/auth/register', { name, email, password });
+      token = data.token; localStorage.setItem('token', token); localStorage.setItem('userName', data.user.name);
+      showDash(); loadWallet();
+    } catch (e) { showAuthMsg('registerMsg', e.message, 'error'); }
+    btn.disabled = false;
+  }
+
+  async function login() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) return showAuthMsg('loginMsg', 'Fill all fields', 'error');
+    const btn = document.getElementById('loginBtn'); btn.disabled = true;
+    try {
+      const data = await api('POST', '/auth/login', { email, password });
+      token = data.token; localStorage.setItem('token', token); localStorage.setItem('userName', data.user.name);
+      showDash(); loadWallet();
+    } catch (e) { showAuthMsg('loginMsg', e.message, 'error'); }
+    btn.disabled = false;
+  }
+
+  function logout() {
+    token = null; localStorage.removeItem('token'); localStorage.removeItem('userName');
+    document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = '';
+    showAuth();
+  }
+
+  // ─── Wallet ───
+  async function loadWallet() {
+    document.getElementById('dashUserName').textContent = 'Welcome back, ' + (localStorage.getItem('userName') || 'User');
+    refreshBalance(); refreshTx();
+  }
+
+  async function refreshBalance() {
+    try {
+      const data = await api('GET', '/wallet/balance');
+      const bal = Number(data.balance);
+      document.getElementById('balanceDisplay').textContent = '₦' + bal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    } catch (e) { if (e.message === 'Unauthorized') logout(); }
+  }
+
+  async function refreshTx() {
+    try {
+      const txs = await api('GET', '/wallet/transactions');
+      const container = document.getElementById('txList');
+      if (!txs.length) {
+        container.innerHTML = '<div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>';
+        return;
+      }
+      container.innerHTML = txs.map(tx => {
+        const isDebit = tx.type === 'SEND' || tx.type === 'WITHDRAW';
+        const iconClass = tx.type === 'DEPOSIT' ? 'deposit' : tx.type === 'SEND' ? 'send' : 'withdraw';
+        const icon = tx.type === 'DEPOSIT' ? 'fa-arrow-down' : tx.type === 'SEND' ? 'fa-paper-plane' : 'fa-arrow-up';
+        const detail = tx.counterparty ? `<div class="tx-counterparty">→ ${tx.counterparty}</div>` : '';
+        const date = new Date(tx.createdAt).toLocaleDateString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+        return `<div class="tx-item">
+          <div class="tx-icon ${iconClass}"><i class="fas ${icon}"></i></div>
+          <div class="tx-info">
+            <div class="tx-type">${tx.type}</div>
+            ${detail}
+            <div class="tx-ref">${tx.reference.substring(0, 10)}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="tx-amount ${isDebit ? 'debit' : 'credit'}">${isDebit ? '-' : '+'}₦${Number(tx.amount).toLocaleString()}</div>
+            <div class="tx-date">${date}</div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch (e) { if (e.message === 'Unauthorized') logout(); }
+  }
+
+  // ─── Modal ───
+  let currentAction = '';
+
+  function openModal(action) {
+    currentAction = action;
+    const overlay = document.getElementById('modalOverlay');
+    const title = document.getElementById('modalTitle');
+    const sub = document.getElementById('modalSub');
+    const body = document.getElementById('modalBody');
+    const msg = document.getElementById('modalMsg');
+    msg.className = 'modal-msg';
+
+    if (action === 'deposit') {
+      title.innerHTML = '<i class="fas fa-arrow-down" style="color:#10b981"></i> Deposit';
+      sub.textContent = 'Add money to your wallet';
+      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" style="background:#10b981" id="modalActionBtn" onclick="executeAction()">Deposit</button>`;
+    } else if (action === 'send') {
+      title.innerHTML = '<i class="fas fa-paper-plane" style="color:#3b82f6"></i> Send Money';
+      sub.textContent = 'Transfer to another person';
+      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name"><button class="modal-btn" style="background:#3b82f6" id="modalActionBtn" onclick="executeAction()">Send</button>`;
+    } else if (action === 'withdraw') {
+      title.innerHTML = '<i class="fas fa-arrow-up" style="color:#f59e0b"></i> Withdraw';
+      sub.textContent = 'Withdraw money from your wallet';
+      body.innerHTML = `<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" style="background:#f59e0b" id="modalActionBtn" onclick="executeAction()">Withdraw</button>`;
+    }
+    overlay.classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== document.getElementById('modalOverlay') && !e.target.closest('.modal-cancel')) return;
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.getElementById('modalMsg').className = 'modal-msg';
+  }
+
+  function showModalMsg(text, type) {
+    const el = document.getElementById('modalMsg');
+    el.textContent = text;
+    el.className = 'modal-msg ' + type;
+    setTimeout(() => { el.className = 'modal-msg'; }, 4000);
+  }
+
+  async function executeAction() {
+    const amount = parseFloat(document.getElementById('modalAmount').value);
+    if (!amount || amount <= 0) return showModalMsg('Enter a valid amount', 'error');
+    const btn = document.getElementById('modalActionBtn');
+    btn.disabled = true;
+    try {
+      if (currentAction === 'deposit') {
+        const data = await api('POST', '/wallet/deposit', { amount });
+        showModalMsg('Deposited ₦' + amount.toLocaleString() + ' successfully', 'success');
+      } else if (currentAction === 'send') {
+        const recipient = document.getElementById('modalRecipient').value.trim();
+        if (!recipient) { showModalMsg('Enter a recipient name', 'error'); btn.disabled = false; return; }
+        const data = await api('POST', '/wallet/send', { amount, recipient });
+        showModalMsg('Sent ₦' + amount.toLocaleString() + ' to ' + recipient, 'success');
+      } else if (currentAction === 'withdraw') {
+        const data = await api('POST', '/wallet/withdraw', { amount });
+        showModalMsg('Withdrew ₦' + amount.toLocaleString() + ' successfully', 'success');
+      }
+      document.getElementById('modalAmount').value = '';
+      if (document.getElementById('modalRecipient')) document.getElementById('modalRecipient').value = '';
+      refreshBalance(); refreshTx();
+    } catch (e) { showModalMsg(e.message, 'error'); }
+    btn.disabled = false;
+  }
+</script>
+</body>
+</html>

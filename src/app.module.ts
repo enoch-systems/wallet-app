@@ -1,0 +1,27 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { WalletModule } from './wallet/wallet.module';
+import { AuthModule } from './auth/auth.module';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'better-sqlite3',
+      database: 'wallet.db',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+    AuthModule,
+    WalletModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
