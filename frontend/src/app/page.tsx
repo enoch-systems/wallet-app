@@ -11,7 +11,6 @@ import {
 
 const API = "https://wallet-app-xqtq.onrender.com";
 
-// ─── API Helper ────────────────────────────────────────────────
 async function api(method: string, path: string, body?: Record<string, unknown>, token?: string) {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -62,7 +61,6 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     <div className="min-h-screen flex items-center justify-center p-5"
       style={{ background: "linear-gradient(160deg, #00A651 0%, #007B3A 100%)" }}>
       <div className="bg-white rounded-3xl p-8 w-full max-w-[400px] shadow-2xl">
-        {/* Logo */}
         <div className="text-center mb-7">
           <div className="w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg"
             style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
@@ -71,19 +69,14 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           <h1 className="text-[22px] font-[800]">Walleo</h1>
           <p className="text-[13px] text-gray-500 mt-1">Send, receive & manage your money</p>
         </div>
-
-        {/* Tabs */}
         <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
           {(["login", "register"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)}
-              className={`flex-1 py-2.5 rounded-[10px] text-[14px] font-semibold transition-all ${
-                tab === t ? "bg-white text-[#00A651] shadow-sm" : "text-gray-500"}`}>
+              className={`flex-1 py-2.5 rounded-[10px] text-[14px] font-semibold transition-all ${tab === t ? "bg-white text-[#00A651] shadow-sm" : "text-gray-500"}`}>
               {t === "login" ? "Sign In" : "Register"}
             </button>
           ))}
         </div>
-
-        {/* Form */}
         <div className="flex flex-col gap-3.5">
           {tab === "register" && (
             <div className="relative">
@@ -111,9 +104,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             {loading ? "Please wait..." : tab === "login" ? "Sign In" : "Create Account"}
           </button>
           {msg.text && (
-            <div className={`px-3.5 py-2.5 rounded-xl text-[13px] ${
-              msg.type === "error" ? "bg-red-50 text-red-600 border border-red-200" : "bg-green-50 text-green-600 border border-green-200"
-            }`}>{msg.text}</div>
+            <div className={`px-3.5 py-2.5 rounded-xl text-[13px] ${msg.type === "error" ? "bg-red-50 text-red-600 border border-red-200" : "bg-green-50 text-green-600 border border-green-200"}`}>{msg.text}</div>
           )}
         </div>
         <p className="text-center text-[12px] text-gray-400 mt-5">Secured with end-to-end encryption</p>
@@ -183,6 +174,7 @@ function PinScreen({ onDone }: { onDone: () => void }) {
 
 // ─── Dashboard ─────────────────────────────────────────────────
 function Dashboard({ token, userName, onLogout }: { token: string; userName: string; onLogout: () => void }) {
+  const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [hideBalance, setHideBalance] = useState(false);
   const [transactions, setTransactions] = useState<Record<string, unknown>[]>([]);
@@ -237,7 +229,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] pb-24">
+    <div className="min-h-screen bg-[#f0f0f0] pb-24 pt-6">
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between px-5 pt-4 pb-2">
         <div className="flex items-center gap-2.5">
@@ -252,7 +244,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
         <div className="flex items-center gap-4">
           <div className="relative w-[38px] h-[38px] bg-white rounded-[10px] flex items-center justify-center shadow-sm cursor-pointer">
             <Headset className="w-[18px] h-[18px] text-gray-600" />
-            <span className="absolute -top-1.5 -right-2 bg-[#EF4444] text-white text-[7px] font-bold px-1 rounded">HELP</span>
+            <span className="absolute -top-1.5 -right-2 bg-[#EF4444] text-white text-[7px] font-bold px-1.5 rounded-sm">HELP</span>
           </div>
           <div className="w-[38px] h-[38px] bg-white rounded-[10px] flex items-center justify-center shadow-sm cursor-pointer">
             <ScanLine className="w-[18px] h-[18px] text-gray-600" />
@@ -273,7 +265,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
               {hideBalance ? <EyeOff className="w-[14px] h-[14px]" /> : <Eye className="w-[14px] h-[14px]" />}
             </button>
           </div>
-          <span className="text-[13px] font-medium opacity-90 flex items-center gap-1 cursor-pointer" onClick={() => window.location.href = '/transactions'}>
+          <span className="text-[13px] font-medium opacity-90 flex items-center gap-1 cursor-pointer" onClick={() => router.push("/transactions")}>
             Transaction History <ChevronRight className="w-3 h-3" />
           </span>
         </div>
@@ -287,11 +279,11 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
         <div className="clear-both" />
       </div>
 
-      {/* ─── Recent Transactions ─── */}
+      {/* ─── Recent Transactions (show 2 only) ─── */}
       <div className="mx-4 mt-3 bg-white rounded-2xl p-4">
         <div className="flex justify-between items-center mb-3.5">
           <h3 className="text-[15px] font-bold">Recent Transactions</h3>
-          <span className="text-[13px] text-[#00A651] font-semibold cursor-pointer" onClick={() => window.location.href = '/transactions'}>See All</span>
+          <span className="text-[13px] text-[#00A651] font-semibold cursor-pointer" onClick={() => router.push("/transactions")}>See All</span>
         </div>
         {transactions.length === 0 ? (
           <div className="text-center py-6 text-gray-400">
@@ -299,7 +291,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
             <p className="text-[13px]">No transactions yet</p>
           </div>
         ) : (
-          transactions.slice(0, 5).map((tx: Record<string, unknown>, i: number) => {
+          transactions.slice(0, 2).map((tx: Record<string, unknown>, i: number) => {
             const t = txIcon(tx.type as string);
             const isDebit = tx.type === "SEND" || tx.type === "WITHDRAW";
             const desc = tx.type === "DEPOSIT" ? "Deposit" : tx.type === "SEND" ? `Transfer to ${tx.counterparty || "User"}` : "Withdrawal";
@@ -375,13 +367,6 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
         </div>
       </div>
 
-      {/* ─── Saving Challenge ─── */}
-      <div className="mx-4 mt-3 mb-4 rounded-2xl px-5 py-4 flex items-center justify-between text-white"
-        style={{ background: "linear-gradient(135deg, #00A651, #007B3A)" }}>
-        <h3 className="text-[16px] font-bold">Saving Challenge 2026</h3>
-        <span className="text-[28px]">🎯</span>
-      </div>
-
       {/* ─── Bottom Nav ─── */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white flex justify-around py-2 pb-3 border-t border-gray-100 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-50">
         {[
@@ -435,9 +420,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
               </button>
             </div>
             {modalMsg.text && (
-              <div className={`mt-3 px-3.5 py-2.5 rounded-xl text-[13px] ${
-                modalMsg.type === "error" ? "bg-red-50 text-red-600 border border-red-200" : "bg-green-50 text-green-600 border border-green-200"
-              }`}>{modalMsg.text}</div>
+              <div className={`mt-3 px-3.5 py-2.5 rounded-xl text-[13px] ${modalMsg.type === "error" ? "bg-red-50 text-red-600 border border-red-200" : "bg-green-50 text-green-600 border border-green-200"}`}>{modalMsg.text}</div>
             )}
             <button onClick={() => { setModal(null); setModalMsg({ text: "", type: "" }); }}
               className="w-full text-center text-[14px] text-gray-500 mt-3 py-2 bg-transparent border-none cursor-pointer">
