@@ -2,127 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Walleo — NGN Wallet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: #f0f2f5;
-      color: #1a1a2e;
-      min-height: 100vh;
-    }
-    .auth-screen {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-      background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%);
-    }
-    .auth-card {
-      background: white; border-radius: 24px; padding: 40px 32px; width: 100%; max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.02);
-    }
-    .auth-logo { text-align: center; margin-bottom: 32px; }
-    .auth-logo .icon-box {
-      width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(79,70,229,0.3);
-    }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f0f0; color: #1a1a2e; min-height: 100vh; max-width: 430px; margin: 0 auto; position: relative; overflow-x: hidden; }
+    .hidden { display: none !important; }
+
+    /* ===== AUTH SCREENS ===== */
+    .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(160deg, #00A651 0%, #007B3A 100%); }
+    .auth-card { background: white; border-radius: 24px; padding: 40px 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .auth-logo { text-align: center; margin-bottom: 28px; }
+    .auth-logo .icon-box { width: 64px; height: 64px; background: linear-gradient(135deg, #00C853, #00A651); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,166,81,0.3); }
     .auth-logo .icon-box i { font-size: 28px; color: white; }
-    .auth-logo h1 { font-size: 24px; font-weight: 800; color: #1a1a2e; }
-    .auth-logo p { font-size: 14px; color: #6b7280; margin-top: 4px; }
+    .auth-logo h1 { font-size: 22px; font-weight: 800; color: #1a1a2e; }
+    .auth-logo p { font-size: 13px; color: #6b7280; margin-top: 4px; }
     .auth-tabs { display: flex; background: #f3f4f6; border-radius: 12px; padding: 4px; margin-bottom: 24px; }
-    .auth-tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; }
-    .auth-tab.active { background: white; color: #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .auth-form { display: flex; flex-direction: column; gap: 16px; }
+    .auth-tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; font-family: 'Inter'; }
+    .auth-tab.active { background: white; color: #00A651; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .auth-form { display: flex; flex-direction: column; gap: 14px; }
     .auth-form .input-group { position: relative; }
-    .auth-form .input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; }
-    .auth-form input { width: 100%; padding: 14px 14px 14px 44px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: 'Inter'; outline: none; background: #fafafa; }
-    .auth-form input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); background: white; }
-    .auth-form button { padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; }
+    .auth-form .input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; }
+    .auth-form input { width: 100%; padding: 13px 14px 13px 42px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: 'Inter'; outline: none; background: #fafafa; }
+    .auth-form input:focus { border-color: #00A651; box-shadow: 0 0 0 3px rgba(0,166,81,0.1); background: white; }
+    .auth-form button { padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; background: linear-gradient(135deg, #00C853, #00A651); color: white; }
     .auth-form button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .auth-msg { padding: 12px 16px; border-radius: 10px; font-size: 13px; display: none; }
+    .auth-msg { padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
     .auth-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .auth-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-    .auth-footer { text-align: center; margin-top: 20px; font-size: 12px; color: #9ca3af; }
-    .pin-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf1 100%); }
-    .pin-card { background: white; border-radius: 24px; padding: 40px 32px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); text-align: center; }
-    .pin-card .icon-box { width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(79,70,229,0.3); }
+    .auth-footer { text-align: center; margin-top: 18px; font-size: 12px; color: #9ca3af; }
+
+    /* ===== PIN SCREEN ===== */
+    .pin-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(160deg, #00A651 0%, #007B3A 100%); }
+    .pin-card { background: white; border-radius: 24px; padding: 40px 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); text-align: center; }
+    .pin-card .icon-box { width: 64px; height: 64px; background: linear-gradient(135deg, #00C853, #00A651); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,166,81,0.3); }
     .pin-card .icon-box i { font-size: 28px; color: white; }
-    .pin-card h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-    .pin-card p { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+    .pin-card h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .pin-card p { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
     .pin-inputs { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
     .pin-inputs input { width: 56px; height: 64px; text-align: center; font-size: 24px; font-weight: 700; border: 1.5px solid #e5e7eb; border-radius: 12px; outline: none; font-family: 'Inter'; }
-    .pin-inputs input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
-    .pin-card button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; }
-    .dashboard { max-width: 520px; margin: 0 auto; padding: 20px 16px 40px; }
-    .dash-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-    .dash-header-left { display: flex; align-items: center; gap: 12px; }
-    .dash-header-left .logo-sm { width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
-    .dash-header-left .logo-sm i { color: white; font-size: 18px; }
-    .dash-header-left h2 { font-size: 18px; font-weight: 700; }
-    .dash-actions button { padding: 8px 16px; border: 1px solid #e5e7eb; border-radius: 10px; background: white; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-    .dash-actions button:hover { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
-    .balance-card { background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%); border-radius: 20px; padding: 24px; color: white; margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(79,70,229,0.25); }
-    .balance-card::before { content: ''; position: absolute; top: -50%; right: -30%; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; }
-    .balance-card::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 150px; height: 150px; background: rgba(255,255,255,0.03); border-radius: 50%; }
-    .balance-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 1; }
-    .balance-top label { font-size: 13px; opacity: 0.8; font-weight: 500; }
-    .balance-top .currency-badge { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
-    .balance-amount { font-size: 40px; font-weight: 800; letter-spacing: -1px; position: relative; z-index: 1; }
-    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-    .action-btn { background: white; border: none; border-radius: 16px; padding: 16px 8px; cursor: pointer; text-align: center; border: 1px solid #f3f4f6; }
-    .action-btn:active { transform: scale(0.96); }
-    .action-btn .icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-    .action-btn .icon-wrap.green { background: #ecfdf5; }
-    .action-btn .icon-wrap.blue { background: #eff6ff; }
-    .action-btn .icon-wrap.amber { background: #fffbeb; }
-    .action-btn .icon-wrap i { font-size: 20px; }
-    .action-btn .icon-wrap.green i { color: #10b981; }
-    .action-btn .icon-wrap.blue i { color: #3b82f6; }
-    .action-btn .icon-wrap.amber i { color: #f59e0b; }
-    .action-btn span { display: block; font-size: 13px; font-weight: 600; color: #1a1a2e; }
+    .pin-inputs input:focus { border-color: #00A651; box-shadow: 0 0 0 3px rgba(0,166,81,0.1); }
+    .pin-card button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; background: linear-gradient(135deg, #00C853, #00A651); color: white; }
+    .pin-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pin-msg { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
+    .pin-msg.error { display: block; background: #fef2f2; color: #dc2626; }
+
+    /* ===== DASHBOARD ===== */
+    .dashboard { min-height: 100vh; background: #f0f0f0; padding-bottom: 80px; }
+    .dash-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px; }
+    .dash-header-left { display: flex; align-items: center; gap: 10px; }
+    .profile-avatar { width: 44px; height: 44px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #9ca3af; border: 2px solid #00C853; position: relative; }
+    .profile-avatar .badge { position: absolute; bottom: -2px; right: -2px; width: 18px; height: 18px; background: #FFB800; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 8px; color: white; }
+    .dash-header-left .greeting h2 { font-size: 16px; font-weight: 700; }
+    .dash-header-left .greeting h2 span { color: #00A651; }
+    .dash-header-right { display: flex; align-items: center; gap: 16px; }
+    .dash-header-right .hdr-icon { width: 38px; height: 38px; border-radius: 10px; background: white; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #374151; box-shadow: 0 1px 4px rgba(0,0,0,0.06); position: relative; cursor: pointer; }
+    .hdr-icon .notif-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; background: #EF4444; border-radius: 9px; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .hdr-icon .help-badge { position: absolute; top: -6px; right: -8px; background: #EF4444; color: white; font-size: 8px; font-weight: 700; padding: 1px 4px; border-radius: 4px; }
+
+    /* ===== BALANCE CARD ===== */
+    .balance-card { margin: 12px 16px; background: linear-gradient(135deg, #00C853 0%, #00A651 50%, #008C46 100%); border-radius: 20px; padding: 22px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(0,166,81,0.25); }
+    .balance-card::before { content: ''; position: absolute; top: -40%; right: -20%; width: 200px; height: 200px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+    .balance-card::after { content: ''; position: absolute; bottom: -30%; left: -15%; width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+    .balance-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 1; }
+    .balance-top .label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; opacity: 0.95; }
+    .balance-top .label i.verified { color: #00FF88; font-size: 16px; }
+    .balance-top .eye-toggle { cursor: pointer; font-size: 14px; opacity: 0.8; }
+    .balance-top .history-link { font-size: 13px; font-weight: 500; opacity: 0.9; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .balance-amount { font-size: 36px; font-weight: 900; letter-spacing: -1px; position: relative; z-index: 1; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .balance-amount .arrow { font-size: 18px; opacity: 0.7; }
+    .balance-amount.masked { font-size: 30px; letter-spacing: 4px; opacity: 0.5; }
+    .add-money-btn { position: relative; z-index: 1; float: right; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; font-family: 'Inter'; cursor: pointer; }
+    .add-money-btn:active { transform: scale(0.96); }
+
+    /* ===== RECENT TRANSACTIONS ===== */
+    .recent-tx { background: white; margin: 12px 16px; border-radius: 16px; padding: 16px; }
+    .recent-tx-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .recent-tx-header h3 { font-size: 15px; font-weight: 700; }
+    .recent-tx-header a { font-size: 13px; color: #00A651; text-decoration: none; font-weight: 600; }
+    .tx-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; }
+    .tx-icon.send { background: #f0fdf4; }
+    .tx-icon.send i { color: #00A651; font-size: 16px; }
+    .tx-icon.deposit { background: #ecfdf5; }
+    .tx-icon.deposit i { color: #10b981; font-size: 16px; }
+    .tx-icon.withdraw { background: #fff7ed; }
+    .tx-icon.withdraw i { color: #f59e0b; font-size: 16px; }
+    .tx-info { flex: 1; }
+    .tx-info .tx-type { font-size: 14px; font-weight: 600; }
+    .tx-info .tx-date { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+    .tx-right { text-align: right; }
+    .tx-right .tx-amount { font-weight: 700; font-size: 15px; }
+    .tx-right .tx-amount.debit { color: #dc2626; }
+    .tx-right .tx-amount.credit { color: #00A651; }
+    .tx-right .tx-status { font-size: 11px; color: #00A651; font-weight: 600; margin-top: 2px; }
+    .tx-empty { text-align: center; padding: 24px 0; color: #9ca3af; }
+    .tx-empty i { font-size: 36px; margin-bottom: 8px; opacity: 0.4; }
+
+    /* ===== QUICK ACTIONS ===== */
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 16px; background: white; border-radius: 16px; padding: 18px 12px; }
+    .action-btn { background: transparent; border: none; padding: 8px 4px; cursor: pointer; text-align: center; border-radius: 12px; }
+    .action-btn:active { background: #f9fafb; }
+    .action-btn .icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; background: #f0fdf4; }
+    .action-btn .icon-wrap i { font-size: 18px; color: #00A651; }
+    .action-btn span { display: block; font-size: 12px; font-weight: 600; color: #374151; }
+
+    /* ===== BVN BANNER ===== */
+    .bvn-banner { margin: 12px 16px; background: white; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 12px; }
+    .bvn-banner .bvn-icon { width: 48px; height: 48px; border-radius: 50%; background: #FFF7ED; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .bvn-banner .bvn-text { flex: 1; }
+    .bvn-banner .bvn-text h4 { font-size: 14px; font-weight: 600; }
+    .bvn-banner .bvn-text p { font-size: 12px; color: #6b7280; margin-top: 2px; }
+    .bvn-banner .bvn-go { background: #00A651; color: white; border: none; padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter'; }
+
+    /* ===== SERVICES GRID ===== */
+    .services-section { margin: 12px 16px; background: white; border-radius: 16px; padding: 16px; }
+    .services-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+    .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .service-item { text-align: center; padding: 8px 4px; cursor: pointer; border-radius: 12px; position: relative; }
+    .service-item:active { background: #f9fafb; }
+    .service-item .svc-icon { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 6px; background: #f0fdf4; }
+    .service-item .svc-icon i { font-size: 18px; color: #00A651; }
+    .service-item span { display: block; font-size: 11px; font-weight: 600; color: #374151; }
+    .service-item .svc-badge { position: absolute; top: 2px; right: 6px; background: #EF4444; color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+
+    /* ===== SAVING CHALLENGE ===== */
+    .saving-banner { margin: 12px 16px; background: linear-gradient(135deg, #00A651, #007B3A); border-radius: 16px; padding: 18px; color: white; display: flex; align-items: center; justify-content: space-between; }
+    .saving-banner h3 { font-size: 16px; font-weight: 700; }
+    .saving-banner .save-icon { font-size: 32px; opacity: 0.9; }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: white; display: flex; justify-content: space-around; padding: 8px 0 12px; border-top: 1px solid #f0f0f0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 50; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 12px; cursor: pointer; border-radius: 12px; font-size: 11px; font-weight: 500; color: #9ca3af; background: transparent; border: none; font-family: 'Inter'; }
+    .nav-item.active { color: #00A651; font-weight: 700; }
+    .nav-item i { font-size: 18px; }
+
+    /* ===== MODAL ===== */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 100; padding: 20px; }
     .modal-overlay.active { display: flex; }
-    .modal-sheet { background: white; border-radius: 24px 24px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 520px; animation: slideUp 0.3s ease; }
+    .modal-sheet { background: white; border-radius: 24px 24px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 430px; animation: slideUp 0.3s ease; }
     @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .modal-sheet .modal-handle { width: 36px; height: 4px; background: #e5e7eb; border-radius: 4px; margin: 0 auto 20px; }
     .modal-sheet h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
     .modal-sheet .modal-sub { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
     .modal-sheet input { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: 'Inter'; outline: none; background: #fafafa; margin-bottom: 12px; }
-    .modal-sheet input:focus { border-color: #4f46e5; background: white; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
-    .modal-sheet .modal-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; color: white; }
+    .modal-sheet input:focus { border-color: #00A651; background: white; box-shadow: 0 0 0 3px rgba(0,166,81,0.1); }
+    .modal-sheet .modal-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; color: white; background: linear-gradient(135deg, #00C853, #00A651); }
     .modal-sheet .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .modal-msg { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
     .modal-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .modal-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .modal-cancel { display: block; text-align: center; margin-top: 12px; font-size: 14px; color: #6b7280; cursor: pointer; font-family: 'Inter'; border: none; background: none; width: 100%; padding: 8px; }
-    .tx-section { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-    .tx-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .tx-header h3 { font-size: 15px; font-weight: 700; }
-    .tx-header h3 i { margin-right: 8px; color: #9ca3af; }
-    .tx-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
-    .tx-item:last-child { border-bottom: none; }
-    .tx-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; }
-    .tx-icon.deposit { background: #ecfdf5; }
-    .tx-icon.send { background: #eff6ff; }
-    .tx-icon.withdraw { background: #fffbeb; }
-    .tx-icon.deposit i { color: #10b981; font-size: 16px; }
-    .tx-icon.send i { color: #3b82f6; font-size: 16px; }
-    .tx-icon.withdraw i { color: #f59e0b; font-size: 16px; }
-    .tx-info { flex: 1; }
-    .tx-info .tx-type { font-size: 14px; font-weight: 600; }
-    .tx-info .tx-ref { font-size: 11px; color: #9ca3af; font-family: monospace; }
-    .tx-amount { font-weight: 700; font-size: 15px; text-align: right; }
-    .tx-amount.credit { color: #10b981; }
-    .tx-amount.debit { color: #dc2626; }
-    .tx-empty { text-align: center; padding: 32px 0; color: #9ca3af; }
-    .tx-empty i { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
+
+<!-- ===== AUTH SCREEN ===== -->
 <div id="authScreen" class="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
@@ -151,6 +190,7 @@
   </div>
 </div>
 
+<!-- ===== PIN SCREEN ===== -->
 <div id="pinScreen" class="pin-screen hidden">
   <div class="pin-card">
     <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
@@ -167,50 +207,133 @@
   </div>
 </div>
 
+<!-- ===== DASHBOARD ===== -->
 <div id="dashScreen" class="dashboard hidden">
+  <!-- Header -->
   <div class="dash-header">
     <div class="dash-header-left">
-      <div class="logo-sm"><i class="fas fa-wallet"></i></div>
-      <div>
-        <h2>Walleo</h2>
-        <p id="dashUserName">Welcome back</p>
+      <div class="profile-avatar">
+        <i class="fas fa-user"></i>
+        <div class="badge"><i class="fas fa-star" style="font-size:7px"></i></div>
+      </div>
+      <div class="greeting">
+        <h2>Hi, <span id="dashUserName">User</span></h2>
       </div>
     </div>
-    <div class="dash-actions">
-      <button onclick="logout()"><i class="fas fa-right-from-bracket"></i></button>
+    <div class="dash-header-right">
+      <div class="hdr-icon" title="Help">
+        <i class="fas fa-headset"></i>
+        <span class="help-badge">HELP</span>
+      </div>
+      <div class="hdr-icon" title="Scan">
+        <i class="fas fa-expand"></i>
+      </div>
+      <div class="hdr-icon" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notif-badge">44</span>
+      </div>
     </div>
   </div>
+
+  <!-- Balance Card -->
   <div class="balance-card">
     <div class="balance-top">
-      <label>Available Balance</label>
-      <span class="currency-badge"><i class="fas fa-naira-sign" style="margin-right:4px"></i>NGN</span>
+      <div class="label">
+        <i class="fas fa-circle-check verified"></i> Available Balance
+        <i class="fas fa-eye eye-toggle" id="eyeToggle" onclick="toggleBalance()"></i>
+      </div>
+      <div class="history-link" onclick="scrollToTransactions()">Transaction History <i class="fas fa-chevron-right" style="font-size:11px"></i></div>
     </div>
-    <div class="balance-amount" id="balanceDisplay">₦0.00</div>
+    <div class="balance-amount" id="balanceDisplay">₦0.00 <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
+    <button class="add-money-btn" onclick="openModal('deposit')">+ Add Money</button>
+    <div style="clear:both"></div>
   </div>
-  <div class="quick-actions">
-    <button class="action-btn" onclick="openModal('deposit')">
-      <div class="icon-wrap green"><i class="fas fa-arrow-down"></i></div>
-      <span>Deposit</span>
-    </button>
-    <button class="action-btn" onclick="openModal('send')">
-      <div class="icon-wrap blue"><i class="fas fa-paper-plane"></i></div>
-      <span>Send</span>
-    </button>
-    <button class="action-btn" onclick="openModal('withdraw')">
-      <div class="icon-wrap amber"><i class="fas fa-arrow-up"></i></div>
-      <span>Withdraw</span>
-    </button>
-  </div>
-  <div class="tx-section">
-    <div class="tx-header">
-      <h3><i class="fas fa-clock-rotate"></i> Transactions</h3>
+
+  <!-- Recent Transactions -->
+  <div class="recent-tx" id="recentTxSection">
+    <div class="recent-tx-header">
+      <h3>Recent Transactions</h3>
+      <a href="#" onclick="event.preventDefault()">See All</a>
     </div>
-    <div id="txList" class="tx-list">
+    <div id="txList">
       <div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>
     </div>
   </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button class="action-btn" onclick="openModal('send')">
+      <div class="icon-wrap"><i class="fas fa-user"></i></div>
+      <span>To User</span>
+    </button>
+    <button class="action-btn" onclick="openModal('send')">
+      <div class="icon-wrap"><i class="fas fa-building-columns"></i></div>
+      <span>To Bank</span>
+    </button>
+    <button class="action-btn" onclick="openModal('withdraw')">
+      <div class="icon-wrap"><i class="fas fa-arrow-right-from-bracket"></i></div>
+      <span>Withdraw</span>
+    </button>
+  </div>
+
+  <!-- BVN/NIN Banner -->
+  <div class="bvn-banner">
+    <div class="bvn-icon">🪪</div>
+    <div class="bvn-text">
+      <h4>Verify your identity</h4>
+      <p>Complete your BVN and NIN verification</p>
+    </div>
+    <button class="bvn-go">Go</button>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-section">
+    <h3>Services</h3>
+    <div class="services-grid">
+      <div class="service-item">
+        <span class="svc-badge">Up to 6%</span>
+        <div class="svc-icon"><i class="fas fa-signal"></i></div>
+        <span>Airtime</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-wifi"></i></div>
+        <span>Data</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-trophy"></i></div>
+        <span>Betting</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-tv"></i></div>
+        <span>TV</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-lock"></i></div>
+        <span>SafeBox</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-hand-holding-dollar"></i></div>
+        <span>Loan</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-gift"></i></div>
+        <span>Invitation</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon"><i class="fas fa-ellipsis"></i></div>
+        <span>More</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saving Challenge Banner -->
+  <div class="saving-banner">
+    <h3>Saving Challenge 2026</h3>
+    <div class="save-icon">🎯</div>
+  </div>
 </div>
 
+<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <div class="modal-handle"></div>
@@ -310,16 +433,38 @@
     btn.disabled = false;
   }
 
-  async function loadWallet() {
-    document.getElementById('dashUserName').textContent = 'Welcome back, ' + (localStorage.getItem('userName') || 'User');
+  function loadWallet() {
+    const userName = localStorage.getItem('userName') || 'User';
+    document.getElementById('dashUserName').textContent = userName;
     refreshBalance(); refreshTx();
   }
 
+  let balanceHidden = false;
+  function toggleBalance() {
+    const el = document.getElementById('balanceDisplay');
+    const icon = document.getElementById('eyeToggle');
+    balanceHidden = !balanceHidden;
+    if (balanceHidden) {
+      el.innerHTML = '₦ •••••• <span class="arrow"><i class="fas fa-chevron-right"></i></span>';
+      el.classList.add('masked');
+      icon.className = 'fas fa-eye-slash eye-toggle';
+    } else {
+      el.classList.remove('masked');
+      icon.className = 'fas fa-eye eye-toggle';
+      refreshBalance();
+    }
+  }
+
+  function scrollToTransactions() {
+    document.getElementById('recentTxSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
   async function refreshBalance() {
+    if (balanceHidden) return;
     try {
       const data = await api('GET', '/wallet/balance');
       const bal = Number(data.balance);
-      document.getElementById('balanceDisplay').textContent = '₦' + bal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      document.getElementById('balanceDisplay').innerHTML = '\u20A6' + bal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' <span class="arrow"><i class="fas fa-chevron-right"></i></span>';
     } catch (e) { if (e.message === 'Unauthorized') logout(); }
   }
 
@@ -330,11 +475,11 @@
       if (!txs.length) { container.innerHTML = '<div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>'; return; }
       container.innerHTML = txs.map(tx => {
         const isDebit = tx.type === 'SEND' || tx.type === 'WITHDRAW';
-        const iconClass = tx.type === 'DEPOSIT' ? 'deposit' : tx.type === 'SEND' ? 'send' : 'withdraw';
-        const icon = tx.type === 'DEPOSIT' ? 'fa-arrow-down' : tx.type === 'SEND' ? 'fa-paper-plane' : 'fa-arrow-up';
-        const detail = tx.counterparty ? `<div class="tx-counterparty">→ ${tx.counterparty}</div>` : '';
-        const date = new Date(tx.createdAt).toLocaleDateString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
-        return `<div class="tx-item"><div class="tx-icon ${iconClass}"><i class="fas ${icon}"></i></div><div class="tx-info"><div class="tx-type">${tx.type}</div>${detail}<div class="tx-ref">${tx.reference.substring(0, 10)}</div></div><div style="text-align:right"><div class="tx-amount ${isDebit ? 'debit' : 'credit'}">${isDebit ? '-' : '+'}₦${Number(tx.amount).toLocaleString()}</div><div class="tx-date">${date}</div></div></div>`;
+        const iconClass = tx.type === 'DEPOSIT' ? 'deposit' : 'send';
+        const icon = tx.type === 'DEPOSIT' ? 'fa-arrow-down' : 'fa-arrow-up';
+        const date = new Date(tx.createdAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        const desc = tx.type === 'DEPOSIT' ? 'Deposit' : tx.type === 'SEND' ? 'Transfer to ' + (tx.counterparty || 'User') : 'Withdrawal';
+        return `<div class="tx-item"><div class="tx-icon ${iconClass}"><i class="fas ${icon}"></i></div><div class="tx-info"><div class="tx-type">${desc}</div><div class="tx-date">${date}</div></div><div class="tx-right"><div class="tx-amount ${isDebit ? 'debit' : 'credit'}">${isDebit ? '-' : '+'}\u20A6${Number(tx.amount).toLocaleString()}</div><div class="tx-status">Successful</div></div></div>`;
       }).join('');
     } catch (e) { if (e.message === 'Unauthorized') logout(); }
   }
@@ -347,17 +492,17 @@
     const body = document.getElementById('modalBody');
     document.getElementById('modalMsg').className = 'modal-msg';
     if (action === 'deposit') {
-      title.innerHTML = '<i class="fas fa-arrow-down" style="color:#10b981"></i> Deposit';
+      title.innerHTML = '<i class="fas fa-arrow-down" style="color:#00A651"></i> Deposit';
       sub.textContent = 'Add money to your wallet';
-      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" style="background:#10b981" id="modalActionBtn" onclick="executeAction()">Deposit</button>';
+      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Deposit</button>';
     } else if (action === 'send') {
-      title.innerHTML = '<i class="fas fa-paper-plane" style="color:#3b82f6"></i> Send Money';
+      title.innerHTML = '<i class="fas fa-paper-plane" style="color:#00A651"></i> Send Money';
       sub.textContent = 'Enter your PIN to authorize';
-      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" style="background:#3b82f6" id="modalActionBtn" onclick="executeAction()">Send</button>';
+      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Send</button>';
     } else if (action === 'withdraw') {
       title.innerHTML = '<i class="fas fa-arrow-up" style="color:#f59e0b"></i> Withdraw';
       sub.textContent = 'Enter your PIN to authorize';
-      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" style="background:#f59e0b" id="modalActionBtn" onclick="executeAction()">Withdraw</button>';
+      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Withdraw</button>';
     }
     overlay.classList.add('active');
   }
@@ -381,19 +526,19 @@
     try {
       if (currentAction === 'deposit') {
         await api('POST', '/wallet/deposit', { amount });
-        showModalMsg('Deposited ₦' + amount.toLocaleString() + ' successfully', 'success');
+        showModalMsg('Deposited \u20A6' + amount.toLocaleString() + ' successfully', 'success');
       } else if (currentAction === 'send') {
         const recipient = document.getElementById('modalRecipient').value.trim();
         const pin = document.getElementById('modalPin').value;
         if (!recipient) { showModalMsg('Enter a recipient name', 'error'); btn.disabled = false; return; }
         if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; return; }
         await api('POST', '/wallet/send', { amount, recipient, pin });
-        showModalMsg('Sent ₦' + amount.toLocaleString() + ' to ' + recipient, 'success');
+        showModalMsg('Sent \u20A6' + amount.toLocaleString() + ' to ' + recipient, 'success');
       } else if (currentAction === 'withdraw') {
         const pin = document.getElementById('modalPin').value;
         if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; return; }
         await api('POST', '/wallet/withdraw', { amount, pin });
-        showModalMsg('Withdrew ₦' + amount.toLocaleString() + ' successfully', 'success');
+        showModalMsg('Withdrew \u20A6' + amount.toLocaleString() + ' successfully', 'success');
       }
       document.getElementById('modalAmount').value = '';
       if (document.getElementById('modalRecipient')) document.getElementById('modalRecipient').value = '';
