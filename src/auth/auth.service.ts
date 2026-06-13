@@ -20,14 +20,16 @@ export class AuthService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = this.userRepo.create({ name, email, password: hashedPassword });
+    const userCount = await this.userRepo.count();
+    const isAdmin = userCount === 0;
+    const user = this.userRepo.create({ name, email, password: hashedPassword, isAdmin });
     await this.userRepo.save(user);
 
     const token = this.jwtService.sign({ userId: user.id, email: user.email });
 
     return {
       token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin },
     };
   }
 
@@ -46,7 +48,7 @@ export class AuthService {
 
     return {
       token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin },
     };
   }
 
@@ -71,3 +73,4 @@ export class AuthService {
     return bcrypt.compare(pin, user.pin);
   }
 }
+
