@@ -230,9 +230,9 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
     <div className="min-h-screen bg-[#f0f0f0] pb-24 pt-6">
       {/* ─── Header ─── */}
       <div className="flex items-center justify-between px-5 pt-4 pb-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-11 h-11 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 border-2 border-[#00C853] relative">
-            <img src="https://res.cloudinary.com/djdbcoyot/image/upload/v1781372426/vu33goz3fwtqc9hqxndq.jpg" alt="Profile" className="w-full h-full object-cover" />
+          <div className="flex items-center gap-2.5">
+          <div className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center border-2 border-[#00C853] relative">
+            <User className="w-5 h-5 text-gray-400" />
             <div className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] bg-[#FFB800] rounded-full border-2 border-white flex items-center justify-center">
               <span className="text-[7px] text-white">★</span>
             </div>
