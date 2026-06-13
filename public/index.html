@@ -5,163 +5,210 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Walleo — NGN Wallet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f0f0; color: #1a1a2e; min-height: 100vh; max-width: 430px; margin: 0 auto; position: relative; overflow-x: hidden; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #f2f4f8; color: #0d1b2a; min-height: 100vh; max-width: 430px; margin: 0 auto; position: relative; overflow-x: hidden; }
     .hidden { display: none !important; }
+    button { font-family: 'Inter'; }
 
-    /* ===== AUTH SCREENS ===== */
-    .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(160deg, #00A651 0%, #007B3A 100%); }
-    .auth-card { background: white; border-radius: 24px; padding: 40px 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-    .auth-logo { text-align: center; margin-bottom: 28px; }
-    .auth-logo .icon-box { width: 64px; height: 64px; background: linear-gradient(135deg, #00C853, #00A651); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,166,81,0.3); }
-    .auth-logo .icon-box i { font-size: 28px; color: white; }
-    .auth-logo h1 { font-size: 22px; font-weight: 800; color: #1a1a2e; }
-    .auth-logo p { font-size: 13px; color: #6b7280; margin-top: 4px; }
-    .auth-tabs { display: flex; background: #f3f4f6; border-radius: 12px; padding: 4px; margin-bottom: 24px; }
-    .auth-tab { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; font-family: 'Inter'; }
-    .auth-tab.active { background: white; color: #00A651; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    .auth-form { display: flex; flex-direction: column; gap: 14px; }
+    /* ===== AUTH ===== */
+    .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 20px; background: #f2f4f8; }
+    .auth-card { background: white; border-radius: 28px; padding: 44px 28px 36px; width: 100%; max-width: 400px; box-shadow: 0 2px 40px rgba(0,0,0,0.06); }
+    .auth-logo { text-align: center; margin-bottom: 32px; }
+    .auth-logo .icon-box { width: 72px; height: 72px; background: linear-gradient(145deg, #00D45A, #009F3C); border-radius: 22px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 12px 32px rgba(0,166,81,0.25); }
+    .auth-logo .icon-box i { font-size: 32px; color: white; }
+    .auth-logo h1 { font-size: 26px; font-weight: 900; color: #0d1b2a; letter-spacing: -0.5px; }
+    .auth-logo p { font-size: 14px; color: #6b7280; margin-top: 4px; font-weight: 400; }
+    .auth-tabs { display: flex; background: #f3f4f6; border-radius: 14px; padding: 4px; margin-bottom: 28px; }
+    .auth-tab { flex: 1; padding: 12px; border: none; background: transparent; border-radius: 11px; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; }
+    .auth-tab.active { background: white; color: #00A651; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .auth-form { display: flex; flex-direction: column; gap: 16px; }
     .auth-form .input-group { position: relative; }
-    .auth-form .input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; }
-    .auth-form input { width: 100%; padding: 13px 14px 13px 42px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: 'Inter'; outline: none; background: #fafafa; }
-    .auth-form input:focus { border-color: #00A651; box-shadow: 0 0 0 3px rgba(0,166,81,0.1); background: white; }
-    .auth-form button { padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; background: linear-gradient(135deg, #00C853, #00A651); color: white; }
-    .auth-form button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .auth-msg { padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
+    .auth-form .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; }
+    .auth-form input { width: 100%; padding: 15px 16px 15px 48px; border: 2px solid #eef0f3; border-radius: 14px; font-size: 15px; font-family: 'Inter'; outline: none; background: #fafbfc; transition: 0.2s; }
+    .auth-form input:focus { border-color: #00A651; background: white; box-shadow: 0 0 0 4px rgba(0,166,81,0.08); }
+    .auth-form button { padding: 16px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; background: linear-gradient(145deg, #00D45A, #009F3C); color: white; box-shadow: 0 4px 16px rgba(0,166,81,0.3); }
+    .auth-form button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+    .auth-msg { padding: 12px 16px; border-radius: 12px; font-size: 13px; display: none; }
     .auth-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .auth-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-    .auth-footer { text-align: center; margin-top: 18px; font-size: 12px; color: #9ca3af; }
+    .auth-footer { text-align: center; margin-top: 24px; font-size: 12px; color: #9ca3af; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .auth-footer i { color: #00A651; }
 
-    /* ===== PIN SCREEN ===== */
-    .pin-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(160deg, #00A651 0%, #007B3A 100%); }
-    .pin-card { background: white; border-radius: 24px; padding: 40px 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); text-align: center; }
-    .pin-card .icon-box { width: 64px; height: 64px; background: linear-gradient(135deg, #00C853, #00A651); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,166,81,0.3); }
-    .pin-card .icon-box i { font-size: 28px; color: white; }
-    .pin-card h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-    .pin-card p { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
-    .pin-inputs { display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; }
-    .pin-inputs input { width: 56px; height: 64px; text-align: center; font-size: 24px; font-weight: 700; border: 1.5px solid #e5e7eb; border-radius: 12px; outline: none; font-family: 'Inter'; }
-    .pin-inputs input:focus { border-color: #00A651; box-shadow: 0 0 0 3px rgba(0,166,81,0.1); }
-    .pin-card button { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; background: linear-gradient(135deg, #00C853, #00A651); color: white; }
-    .pin-card button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .pin-msg { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
+    /* ===== PIN ===== */
+    .pin-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 20px; background: #f2f4f8; }
+    .pin-card { background: white; border-radius: 28px; padding: 44px 28px 36px; width: 100%; max-width: 400px; box-shadow: 0 2px 40px rgba(0,0,0,0.06); text-align: center; }
+    .pin-card .icon-box { width: 72px; height: 72px; background: linear-gradient(145deg, #00D45A, #009F3C); border-radius: 22px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 12px 32px rgba(0,166,81,0.25); }
+    .pin-card .icon-box i { font-size: 32px; color: white; }
+    .pin-card h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .pin-card p { font-size: 14px; color: #6b7280; margin-bottom: 28px; }
+    .pin-inputs { display: flex; gap: 14px; justify-content: center; margin-bottom: 28px; }
+    .pin-inputs input { width: 60px; height: 68px; text-align: center; font-size: 26px; font-weight: 800; border: 2px solid #eef0f3; border-radius: 16px; outline: none; font-family: 'Inter'; background: #fafbfc; color: #0d1b2a; }
+    .pin-inputs input:focus { border-color: #00A651; box-shadow: 0 0 0 4px rgba(0,166,81,0.08); background: white; }
+    .pin-card button { width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; background: linear-gradient(145deg, #00D45A, #009F3C); color: white; box-shadow: 0 4px 16px rgba(0,166,81,0.3); }
+    .pin-card button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+    .pin-msg { margin-top: 14px; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
     .pin-msg.error { display: block; background: #fef2f2; color: #dc2626; }
 
     /* ===== DASHBOARD ===== */
-    .dashboard { min-height: 100vh; background: #f0f0f0; padding-bottom: 80px; }
-    .dash-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px; }
-    .dash-header-left { display: flex; align-items: center; gap: 10px; }
-    .profile-avatar { width: 44px; height: 44px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #9ca3af; border: 2px solid #00C853; position: relative; }
-    .profile-avatar .badge { position: absolute; bottom: -2px; right: -2px; width: 18px; height: 18px; background: #FFB800; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 8px; color: white; }
-    .dash-header-left .greeting h2 { font-size: 16px; font-weight: 700; }
+    .dashboard { min-height: 100vh; background: #f2f4f8; padding-bottom: 90px; }
+
+    /* --- Header --- */
+    .dash-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 6px; }
+    .dash-header-left { display: flex; align-items: center; gap: 12px; }
+    .profile-avatar { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(145deg, #e0e7ff, #dbeafe); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #4f46e5; border: 2px solid white; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .profile-avatar .badge { position: absolute; bottom: -1px; right: -1px; width: 20px; height: 20px; background: #FFB800; border-radius: 50%; border: 2.5px solid white; display: flex; align-items: center; justify-content: center; font-size: 8px; color: white; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .dash-header-left .greeting h2 { font-size: 17px; font-weight: 700; color: #0d1b2a; }
     .dash-header-left .greeting h2 span { color: #00A651; }
-    .dash-header-right { display: flex; align-items: center; gap: 16px; }
-    .dash-header-right .hdr-icon { width: 38px; height: 38px; border-radius: 10px; background: white; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #374151; box-shadow: 0 1px 4px rgba(0,0,0,0.06); position: relative; cursor: pointer; }
-    .hdr-icon .notif-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; background: #EF4444; border-radius: 9px; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
-    .hdr-icon .help-badge { position: absolute; top: -6px; right: -8px; background: #EF4444; color: white; font-size: 8px; font-weight: 700; padding: 1px 4px; border-radius: 4px; }
+    .dash-header-left .greeting .sub { font-size: 12px; color: #9ca3af; font-weight: 400; margin-top: 1px; }
+    .dash-header-right { display: flex; align-items: center; gap: 12px; }
+    .dash-header-right .hdr-icon { width: 42px; height: 42px; border-radius: 14px; background: white; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #374151; position: relative; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .dash-header-right .hdr-icon:active { transform: scale(0.92); background: #f9fafb; }
+    .hdr-icon .notif-dot { position: absolute; top: 6px; right: 6px; width: 10px; height: 10px; background: #EF4444; border-radius: 50%; border: 2px solid white; }
+    .hdr-icon .notif-count { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; background: #EF4444; border-radius: 10px; color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 5px; box-shadow: 0 2px 8px rgba(239,68,68,0.3); }
 
-    /* ===== BALANCE CARD ===== */
-    .balance-card { margin: 12px 16px; background: linear-gradient(135deg, #00C853 0%, #00A651 50%, #008C46 100%); border-radius: 20px; padding: 22px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(0,166,81,0.25); }
-    .balance-card::before { content: ''; position: absolute; top: -40%; right: -20%; width: 200px; height: 200px; background: rgba(255,255,255,0.06); border-radius: 50%; }
-    .balance-card::after { content: ''; position: absolute; bottom: -30%; left: -15%; width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%; }
-    .balance-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 1; }
-    .balance-top .label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; opacity: 0.95; }
-    .balance-top .label i.verified { color: #00FF88; font-size: 16px; }
-    .balance-top .eye-toggle { cursor: pointer; font-size: 14px; opacity: 0.8; }
-    .balance-top .history-link { font-size: 13px; font-weight: 500; opacity: 0.9; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    .balance-amount { font-size: 36px; font-weight: 900; letter-spacing: -1px; position: relative; z-index: 1; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-    .balance-amount .arrow { font-size: 18px; opacity: 0.7; }
-    .balance-amount.masked { font-size: 30px; letter-spacing: 4px; opacity: 0.5; }
-    .add-money-btn { position: relative; z-index: 1; float: right; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; font-family: 'Inter'; cursor: pointer; }
-    .add-money-btn:active { transform: scale(0.96); }
+    /* --- Balance Card --- */
+    .balance-card { margin: 10px 16px 0; background: linear-gradient(145deg, #00D45A, #009F3C, #007B2E); border-radius: 24px; padding: 24px 22px; color: white; position: relative; overflow: hidden; box-shadow: 0 8px 40px rgba(0,166,81,0.25); }
+    .balance-card::before { content: ''; position: absolute; top: -60%; right: -30%; width: 280px; height: 280px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+    .balance-card::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 200px; height: 200px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+    .balance-decoration { position: absolute; top: 20px; right: 30px; width: 60px; height: 60px; border: 2px solid rgba(255,255,255,0.08); border-radius: 50%; }
+    .balance-decoration-2 { position: absolute; bottom: 30px; right: 50px; width: 40px; height: 40px; border: 2px solid rgba(255,255,255,0.05); border-radius: 50%; }
+    .balance-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; z-index: 1; }
+    .balance-top .label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; opacity: 0.95; letter-spacing: 0.2px; }
+    .balance-top .label i { font-size: 14px; }
+    .balance-top .eye-toggle { cursor: pointer; font-size: 15px; opacity: 0.7; transition: 0.2s; }
+    .balance-top .eye-toggle:active { opacity: 1; transform: scale(0.9); }
+    .balance-center { position: relative; z-index: 1; }
+    .balance-amount-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .balance-amount { font-size: 38px; font-weight: 900; letter-spacing: -1px; display: flex; align-items: center; gap: 6px; }
+    .balance-amount.masked { font-size: 32px; letter-spacing: 3px; opacity: 0.5; }
+    .balance-arrow { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .balance-arrow i { font-size: 12px; opacity: 0.7; }
+    .balance-bottom { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+    .add-money-btn { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 12px 24px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+    .add-money-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
+    .history-link { font-size: 13px; font-weight: 500; opacity: 0.9; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .history-link i { font-size: 10px; }
 
-    /* ===== RECENT TRANSACTIONS ===== */
-    .recent-tx { background: white; margin: 12px 16px; border-radius: 16px; padding: 16px; }
-    .recent-tx-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .recent-tx-header h3 { font-size: 15px; font-weight: 700; }
+    /* --- Quick Actions --- */
+    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 16px 0; background: white; border-radius: 20px; padding: 20px 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+    .action-btn { background: transparent; border: none; padding: 6px 4px; cursor: pointer; text-align: center; border-radius: 14px; transition: 0.15s; }
+    .action-btn:active { background: #f8fafc; transform: scale(0.97); }
+    .action-btn .icon-wrap { width: 52px; height: 52px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .action-btn .icon-wrap.green { background: #ecfdf5; }
+    .action-btn .icon-wrap.blue { background: #eff6ff; }
+    .action-btn .icon-wrap.amber { background: #fffbeb; }
+    .action-btn .icon-wrap i { font-size: 20px; }
+    .action-btn .icon-wrap.green i { color: #00A651; }
+    .action-btn .icon-wrap.blue i { color: #3b82f6; }
+    .action-btn .icon-wrap.amber i { color: #f59e0b; }
+    .action-btn span { display: block; font-size: 13px; font-weight: 600; color: #1e293b; }
+
+    /* --- Promo Banner --- */
+    .promo-banner { margin: 16px 16px 0; background: linear-gradient(145deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 20px rgba(79,70,229,0.15); position: relative; overflow: hidden; }
+    .promo-banner::before { content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+    .promo-icon { font-size: 40px; flex-shrink: 0; }
+    .promo-text { flex: 1; color: white; position: relative; z-index: 1; }
+    .promo-text h4 { font-size: 16px; font-weight: 700; }
+    .promo-text p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+    .promo-cta { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 22px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .promo-cta:active { background: rgba(255,255,255,0.1); }
+
+    /* --- Recent Transactions --- */
+    .recent-tx { background: white; margin: 16px 16px 0; border-radius: 20px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+    .recent-tx-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .recent-tx-header h3 { font-size: 16px; font-weight: 700; color: #0d1b2a; }
     .recent-tx-header a { font-size: 13px; color: #00A651; text-decoration: none; font-weight: 600; }
-    .tx-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+    .tx-item { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
     .tx-item:last-child { border-bottom: none; }
-    .tx-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; }
-    .tx-icon.send { background: #f0fdf4; }
-    .tx-icon.send i { color: #00A651; font-size: 16px; }
-    .tx-icon.deposit { background: #ecfdf5; }
-    .tx-icon.deposit i { color: #10b981; font-size: 16px; }
-    .tx-icon.withdraw { background: #fff7ed; }
-    .tx-icon.withdraw i { color: #f59e0b; font-size: 16px; }
-    .tx-info { flex: 1; }
-    .tx-info .tx-type { font-size: 14px; font-weight: 600; }
-    .tx-info .tx-date { font-size: 12px; color: #9ca3af; margin-top: 2px; }
-    .tx-right { text-align: right; }
-    .tx-right .tx-amount { font-weight: 700; font-size: 15px; }
+    .tx-icon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 14px; flex-shrink: 0; }
+    .tx-icon.purple { background: #f0eaff; }
+    .tx-icon.purple i { color: #7c3aed; font-size: 17px; }
+    .tx-icon.green { background: #ecfdf5; }
+    .tx-icon.green i { color: #00A651; font-size: 17px; }
+    .tx-icon.amber { background: #fffbeb; }
+    .tx-icon.amber i { color: #f59e0b; font-size: 17px; }
+    .tx-icon.red { background: #fef2f2; }
+    .tx-icon.red i { color: #dc2626; font-size: 17px; }
+    .tx-icon.blue { background: #eff6ff; }
+    .tx-icon.blue i { color: #3b82f6; font-size: 17px; }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-info .tx-type { font-size: 14px; font-weight: 600; color: #0d1b2a; }
+    .tx-info .tx-desc { font-size: 12px; color: #94a3b8; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-right { text-align: right; flex-shrink: 0; }
+    .tx-right .tx-amount { font-weight: 700; font-size: 15px; line-height: 1.3; }
     .tx-right .tx-amount.debit { color: #dc2626; }
     .tx-right .tx-amount.credit { color: #00A651; }
-    .tx-right .tx-status { font-size: 11px; color: #00A651; font-weight: 600; margin-top: 2px; }
-    .tx-empty { text-align: center; padding: 24px 0; color: #9ca3af; }
-    .tx-empty i { font-size: 36px; margin-bottom: 8px; opacity: 0.4; }
+    .tx-right .tx-date { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .tx-empty { text-align: center; padding: 28px 0; color: #94a3b8; }
+    .tx-empty i { font-size: 40px; margin-bottom: 10px; opacity: 0.4; }
+    .tx-empty p { font-size: 14px; }
 
-    /* ===== QUICK ACTIONS ===== */
-    .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 16px; background: white; border-radius: 16px; padding: 18px 12px; }
-    .action-btn { background: transparent; border: none; padding: 8px 4px; cursor: pointer; text-align: center; border-radius: 12px; }
-    .action-btn:active { background: #f9fafb; }
-    .action-btn .icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; background: #f0fdf4; }
-    .action-btn .icon-wrap i { font-size: 18px; color: #00A651; }
-    .action-btn span { display: block; font-size: 12px; font-weight: 600; color: #374151; }
+    /* --- Services Grid --- */
+    .services-section { margin: 16px 16px 0; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+    .services-section .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .services-section .section-header h3 { font-size: 16px; font-weight: 700; color: #0d1b2a; }
+    .services-section .section-header a { font-size: 13px; color: #94a3b8; text-decoration: none; }
+    .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .service-item { text-align: center; padding: 12px 4px; cursor: pointer; border-radius: 16px; transition: 0.15s; position: relative; }
+    .service-item:active { background: #f8fafc; transform: scale(0.96); }
+    .service-item .svc-icon { width: 52px; height: 52px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .service-item .svc-icon.green { background: #ecfdf5; }
+    .service-item .svc-icon.blue { background: #eff6ff; }
+    .service-item .svc-icon.purple { background: #f0eaff; }
+    .service-item .svc-icon.orange { background: #fff7ed; }
+    .service-item .svc-icon.pink { background: #fdf2f8; }
+    .service-item .svc-icon.teal { background: #ecfeff; }
+    .service-item .svc-icon i { font-size: 20px; }
+    .service-item .svc-icon.green i { color: #00A651; }
+    .service-item .svc-icon.blue i { color: #3b82f6; }
+    .service-item .svc-icon.purple i { color: #7c3aed; }
+    .service-item .svc-icon.orange i { color: #f97316; }
+    .service-item .svc-icon.pink i { color: #ec4899; }
+    .service-item .svc-icon.teal i { color: #14b8a6; }
+    .service-item span { display: block; font-size: 12px; font-weight: 600; color: #1e293b; }
+    .service-item .svc-badge { position: absolute; top: 6px; right: 6px; background: #EF4444; color: white; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 6px; line-height: 1.2; }
 
-    /* ===== BVN BANNER ===== */
-    .bvn-banner { margin: 12px 16px; background: white; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 12px; }
-    .bvn-banner .bvn-icon { width: 48px; height: 48px; border-radius: 50%; background: #FFF7ED; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-    .bvn-banner .bvn-text { flex: 1; }
-    .bvn-banner .bvn-text h4 { font-size: 14px; font-weight: 600; }
-    .bvn-banner .bvn-text p { font-size: 12px; color: #6b7280; margin-top: 2px; }
-    .bvn-banner .bvn-go { background: #00A651; color: white; border: none; padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter'; }
+    /* --- Saving Banner --- */
+    .saving-banner { margin: 16px 16px 0; background: linear-gradient(145deg, #059669, #047857); border-radius: 20px; padding: 20px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(5,150,105,0.2); }
+    .saving-left { display: flex; align-items: center; gap: 14px; }
+    .saving-left .save-emoji { font-size: 36px; }
+    .saving-left .save-text h4 { font-size: 16px; font-weight: 700; }
+    .saving-left .save-text p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+    .saving-arrow { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .saving-arrow i { font-size: 14px; }
 
-    /* ===== SERVICES GRID ===== */
-    .services-section { margin: 12px 16px; background: white; border-radius: 16px; padding: 16px; }
-    .services-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
-    .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .service-item { text-align: center; padding: 8px 4px; cursor: pointer; border-radius: 12px; position: relative; }
-    .service-item:active { background: #f9fafb; }
-    .service-item .svc-icon { width: 48px; height: 48px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 6px; background: #f0fdf4; }
-    .service-item .svc-icon i { font-size: 18px; color: #00A651; }
-    .service-item span { display: block; font-size: 11px; font-weight: 600; color: #374151; }
-    .service-item .svc-badge { position: absolute; top: 2px; right: 6px; background: #EF4444; color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+    /* --- Bottom Nav --- */
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: white; display: flex; justify-content: space-around; padding: 6px 0 20px; border-top: 1px solid #f0f0f2; z-index: 50; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 12px; cursor: pointer; border-radius: 12px; font-size: 11px; font-weight: 500; color: #94a3b8; background: transparent; border: none; transition: 0.2s; }
+    .nav-item:active { transform: scale(0.93); }
+    .nav-item i { font-size: 20px; margin-bottom: 2px; }
+    .nav-item.active { color: #00A651; }
+    .nav-item.active i { font-weight: 900; }
 
-    /* ===== SAVING CHALLENGE ===== */
-    .saving-banner { margin: 12px 16px; background: linear-gradient(135deg, #00A651, #007B3A); border-radius: 16px; padding: 18px; color: white; display: flex; align-items: center; justify-content: space-between; }
-    .saving-banner h3 { font-size: 16px; font-weight: 700; }
-    .saving-banner .save-icon { font-size: 32px; opacity: 0.9; }
-
-    /* ===== BOTTOM NAV ===== */
-    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: white; display: flex; justify-content: space-around; padding: 8px 0 12px; border-top: 1px solid #f0f0f0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 50; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 12px; cursor: pointer; border-radius: 12px; font-size: 11px; font-weight: 500; color: #9ca3af; background: transparent; border: none; font-family: 'Inter'; }
-    .nav-item.active { color: #00A651; font-weight: 700; }
-    .nav-item i { font-size: 18px; }
-
-    /* ===== MODAL ===== */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 100; padding: 20px; }
+    /* --- Modal --- */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 100; padding: 20px 0 0; }
     .modal-overlay.active { display: flex; }
-    .modal-sheet { background: white; border-radius: 24px 24px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 430px; animation: slideUp 0.3s ease; }
+    .modal-sheet { background: white; border-radius: 28px 28px 0 0; padding: 28px 24px 36px; width: 100%; max-width: 430px; animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .modal-sheet .modal-handle { width: 36px; height: 4px; background: #e5e7eb; border-radius: 4px; margin: 0 auto 20px; }
-    .modal-sheet h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-    .modal-sheet .modal-sub { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
-    .modal-sheet input { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e7eb; border-radius: 12px; font-size: 14px; font-family: 'Inter'; outline: none; background: #fafafa; margin-bottom: 12px; }
-    .modal-sheet input:focus { border-color: #00A651; background: white; box-shadow: 0 0 0 3px rgba(0,166,81,0.1); }
-    .modal-sheet .modal-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; font-family: 'Inter'; cursor: pointer; color: white; background: linear-gradient(135deg, #00C853, #00A651); }
-    .modal-sheet .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .modal-msg { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: none; }
+    .modal-sheet .modal-handle { width: 40px; height: 4px; background: #e2e8f0; border-radius: 4px; margin: 0 auto 20px; }
+    .modal-sheet h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 12px; color: #0d1b2a; }
+    .modal-sheet .modal-sub { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+    .modal-sheet input { width: 100%; padding: 16px 18px; border: 2px solid #eef0f3; border-radius: 14px; font-size: 15px; font-family: 'Inter'; outline: none; background: #fafbfc; transition: 0.2s; margin-bottom: 14px; }
+    .modal-sheet input:focus { border-color: #00A651; background: white; box-shadow: 0 0 0 4px rgba(0,166,81,0.08); }
+    .modal-sheet .modal-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; color: white; transition: 0.2s; background: linear-gradient(145deg, #00D45A, #009F3C); box-shadow: 0 4px 16px rgba(0,166,81,0.3); }
+    .modal-sheet .modal-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+    .modal-msg { margin-top: 14px; padding: 12px 16px; border-radius: 12px; font-size: 13px; display: none; }
     .modal-msg.success { display: block; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .modal-msg.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-    .modal-cancel { display: block; text-align: center; margin-top: 12px; font-size: 14px; color: #6b7280; cursor: pointer; font-family: 'Inter'; border: none; background: none; width: 100%; padding: 8px; }
+    .modal-cancel { display: block; text-align: center; margin-top: 16px; font-size: 14px; color: #64748b; cursor: pointer; border: none; background: none; width: 100%; padding: 12px; font-family: 'Inter'; font-weight: 500; }
   </style>
 </head>
 <body>
 
-<!-- ===== AUTH SCREEN ===== -->
+<!-- ===== AUTH ===== -->
 <div id="authScreen" class="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
@@ -186,11 +233,11 @@
       <button id="registerBtn" onclick="register()">Create Account</button>
       <div class="auth-msg" id="registerMsg"></div>
     </div>
-    <div class="auth-footer">Secured with end-to-end encryption</div>
+    <div class="auth-footer"><i class="fas fa-shield-halved"></i> Secured with 256-bit encryption</div>
   </div>
 </div>
 
-<!-- ===== PIN SCREEN ===== -->
+<!-- ===== PIN ===== -->
 <div id="pinScreen" class="pin-screen hidden">
   <div class="pin-card">
     <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
@@ -202,7 +249,7 @@
       <input type="password" maxlength="1" id="pin3" oninput="movePin(3)">
       <input type="password" maxlength="1" id="pin4" oninput="movePin(4)">
     </div>
-    <button onclick="setPin()" id="setPinBtn">Set PIN</button>
+    <button onclick="setPin()" id="setPinBtn">Create PIN</button>
     <div class="pin-msg" id="pinMsg"></div>
   </div>
 </div>
@@ -213,124 +260,155 @@
   <div class="dash-header">
     <div class="dash-header-left">
       <div class="profile-avatar">
-        <i class="fas fa-user"></i>
+        <i class="fas fa-user" id="avatarIcon"></i>
         <div class="badge"><i class="fas fa-star" style="font-size:7px"></i></div>
       </div>
       <div class="greeting">
         <h2>Hi, <span id="dashUserName">User</span></h2>
+        <div class="sub">Account verified</div>
       </div>
     </div>
     <div class="dash-header-right">
-      <div class="hdr-icon" title="Help">
-        <i class="fas fa-headset"></i>
-        <span class="help-badge">HELP</span>
-      </div>
-      <div class="hdr-icon" title="Scan">
-        <i class="fas fa-expand"></i>
-      </div>
-      <div class="hdr-icon" title="Notifications">
+      <div class="hdr-icon"><i class="fas fa-qrcode"></i></div>
+      <div class="hdr-icon">
         <i class="fas fa-bell"></i>
-        <span class="notif-badge">44</span>
+        <span class="notif-count">3</span>
       </div>
     </div>
   </div>
 
   <!-- Balance Card -->
   <div class="balance-card">
+    <div class="balance-decoration"></div>
+    <div class="balance-decoration-2"></div>
     <div class="balance-top">
-      <div class="label">
-        <i class="fas fa-circle-check verified"></i> Available Balance
-        <i class="fas fa-eye eye-toggle" id="eyeToggle" onclick="toggleBalance()"></i>
+      <div class="label"><i class="fas fa-circle-check" style="color: #00FF88;"></i> Available Balance</div>
+      <i class="fas fa-eye eye-toggle" id="eyeToggle" onclick="toggleBalance()"></i>
+    </div>
+    <div class="balance-center">
+      <div class="balance-amount-row">
+        <div class="balance-amount" id="balanceDisplay">₦0.00</div>
+        <div class="balance-arrow"><i class="fas fa-chevron-right"></i></div>
       </div>
-      <div class="history-link" onclick="scrollToTransactions()">Transaction History <i class="fas fa-chevron-right" style="font-size:11px"></i></div>
     </div>
-    <div class="balance-amount" id="balanceDisplay">₦0.00 <span class="arrow"><i class="fas fa-chevron-right"></i></span></div>
-    <button class="add-money-btn" onclick="openModal('deposit')">+ Add Money</button>
-    <div style="clear:both"></div>
-  </div>
-
-  <!-- Recent Transactions -->
-  <div class="recent-tx" id="recentTxSection">
-    <div class="recent-tx-header">
-      <h3>Recent Transactions</h3>
-      <a href="#" onclick="event.preventDefault()">See All</a>
-    </div>
-    <div id="txList">
-      <div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>
+    <div class="balance-bottom">
+      <button class="add-money-btn" onclick="openModal('deposit')"><i class="fas fa-plus"></i> Add Money</button>
+      <div class="history-link" onclick="scrollToTransactions()">History <i class="fas fa-chevron-right"></i></div>
     </div>
   </div>
 
   <!-- Quick Actions -->
   <div class="quick-actions">
     <button class="action-btn" onclick="openModal('send')">
-      <div class="icon-wrap"><i class="fas fa-user"></i></div>
-      <span>To User</span>
+      <div class="icon-wrap green"><i class="fas fa-arrow-up-from-bracket"></i></div>
+      <span>Transfer</span>
     </button>
-    <button class="action-btn" onclick="openModal('send')">
-      <div class="icon-wrap"><i class="fas fa-building-columns"></i></div>
-      <span>To Bank</span>
+    <button class="action-btn" onclick="openModal('deposit')">
+      <div class="icon-wrap blue"><i class="fas fa-building-columns"></i></div>
+      <span>Deposit</span>
     </button>
     <button class="action-btn" onclick="openModal('withdraw')">
-      <div class="icon-wrap"><i class="fas fa-arrow-right-from-bracket"></i></div>
+      <div class="icon-wrap amber"><i class="fas fa-hand-holding-dollar"></i></div>
       <span>Withdraw</span>
     </button>
   </div>
 
-  <!-- BVN/NIN Banner -->
-  <div class="bvn-banner">
-    <div class="bvn-icon">🪪</div>
-    <div class="bvn-text">
-      <h4>Verify your identity</h4>
-      <p>Complete your BVN and NIN verification</p>
+  <!-- Promo Banner -->
+  <div class="promo-banner">
+    <div class="promo-icon">🎉</div>
+    <div class="promo-text">
+      <h4>Refer & Earn!</h4>
+      <p>Get ₦500 for every friend you invite</p>
     </div>
-    <button class="bvn-go">Go</button>
+    <button class="promo-cta">Refer Now</button>
   </div>
 
-  <!-- Services Grid -->
+  <!-- Recent Transactions -->
+  <div class="recent-tx">
+    <div class="recent-tx-header">
+      <h3>Recent Transactions</h3>
+      <a href="#">See All <i class="fas fa-chevron-right" style="font-size:10px; margin-left:4px"></i></a>
+    </div>
+    <div id="txList">
+      <div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>
+    </div>
+  </div>
+
+  <!-- Services -->
   <div class="services-section">
-    <h3>Services</h3>
+    <div class="section-header">
+      <h3>Services</h3>
+      <a href="#">All <i class="fas fa-chevron-right" style="font-size:10px; margin-left:4px"></i></a>
+    </div>
     <div class="services-grid">
       <div class="service-item">
-        <span class="svc-badge">Up to 6%</span>
-        <div class="svc-icon"><i class="fas fa-signal"></i></div>
+        <span class="svc-badge">6%</span>
+        <div class="svc-icon green"><i class="fas fa-signal"></i></div>
         <span>Airtime</span>
       </div>
       <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-wifi"></i></div>
+        <div class="svc-icon blue"><i class="fas fa-wifi"></i></div>
         <span>Data</span>
       </div>
       <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-trophy"></i></div>
+        <div class="svc-icon purple"><i class="fas fa-gamepad"></i></div>
         <span>Betting</span>
       </div>
       <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-tv"></i></div>
-        <span>TV</span>
+        <div class="svc-icon orange"><i class="fas fa-tv"></i></div>
+        <span>Cable TV</span>
       </div>
       <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-lock"></i></div>
+        <div class="svc-icon teal"><i class="fas fa-bolt"></i></div>
+        <span>Electricity</span>
+      </div>
+      <div class="service-item">
+        <div class="svc-icon pink"><i class="fas fa-lock"></i></div>
         <span>SafeBox</span>
       </div>
       <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-hand-holding-dollar"></i></div>
+        <div class="svc-icon blue"><i class="fas fa-hand-holding-dollar"></i></div>
         <span>Loan</span>
       </div>
       <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-gift"></i></div>
-        <span>Invitation</span>
-      </div>
-      <div class="service-item">
-        <div class="svc-icon"><i class="fas fa-ellipsis"></i></div>
-        <span>More</span>
+        <div class="svc-icon purple"><i class="fas fa-gift"></i></div>
+        <span>Invite</span>
       </div>
     </div>
   </div>
 
-  <!-- Saving Challenge Banner -->
+  <!-- Saving Challenge -->
   <div class="saving-banner">
-    <h3>Saving Challenge 2026</h3>
-    <div class="save-icon">🎯</div>
+    <div class="saving-left">
+      <div class="save-emoji">🎯</div>
+      <div class="save-text">
+        <h4>Saving Challenge 2026</h4>
+        <p>Save ₦50,000 and earn 15% interest</p>
+      </div>
+    </div>
+    <div class="saving-arrow"><i class="fas fa-arrow-right"></i></div>
   </div>
+
+  <div style="height: 16px;"></div>
+</div>
+
+<!-- ===== BOTTOM NAV ===== -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="navHome" onclick="navigateNav('home')">
+    <i class="fas fa-house"></i> Home
+  </button>
+  <button class="nav-item" id="navRewards" onclick="navigateNav('rewards')">
+    <i class="fas fa-gift"></i> Rewards
+  </button>
+  <button class="nav-item" id="navFinance" onclick="navigateNav('finance')">
+    <i class="fas fa-wallet"></i> Finance
+  </button>
+  <button class="nav-item" id="navCards" onclick="navigateNav('cards')">
+    <i class="fas fa-credit-card"></i> Cards
+  </button>
+  <button class="nav-item" id="navMe" onclick="navigateNav('me')">
+    <i class="fas fa-user"></i> Me
+  </button>
 </div>
 
 <!-- ===== MODAL ===== -->
@@ -377,7 +455,7 @@
     if (token) headers['Authorization'] = 'Bearer ' + token;
     const res = await fetch(API + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
     let data;
-    try { data = await res.json(); } catch { throw new Error('Server is waking up. Please wait a moment and try again.'); }
+    try { data = await res.json(); } catch { throw new Error('Processing... Please try again.'); }
     if (!res.ok) throw new Error(data.message || 'Request failed');
     return data;
   }
@@ -386,28 +464,28 @@
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
-    if (!name || !email || !password) return showAuthMsg('registerMsg', 'Fill all fields', 'error');
+    if (!name || !email || !password) return showAuthMsg('registerMsg', 'Please fill all fields', 'error');
     if (password.length < 6) return showAuthMsg('registerMsg', 'Password must be at least 6 characters', 'error');
-    const btn = document.getElementById('registerBtn'); btn.disabled = true;
+    const btn = document.getElementById('registerBtn'); btn.disabled = true; btn.textContent = 'Creating...';
     try {
       const data = await api('POST', '/auth/register', { name, email, password });
       token = data.token; localStorage.setItem('token', token); localStorage.setItem('userName', data.user.name);
       showSection('pin');
     } catch (e) { showAuthMsg('registerMsg', e.message, 'error'); }
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = 'Create Account';
   }
 
   async function login() {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
-    if (!email || !password) return showAuthMsg('loginMsg', 'Fill all fields', 'error');
-    const btn = document.getElementById('loginBtn'); btn.disabled = true;
+    if (!email || !password) return showAuthMsg('loginMsg', 'Please fill all fields', 'error');
+    const btn = document.getElementById('loginBtn'); btn.disabled = true; btn.textContent = 'Signing in...';
     try {
       const data = await api('POST', '/auth/login', { email, password });
       token = data.token; localStorage.setItem('token', token); localStorage.setItem('userName', data.user.name);
       showSection('dash'); loadWallet();
     } catch (e) { showAuthMsg('loginMsg', e.message, 'error'); }
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = 'Sign In';
   }
 
   function logout() {
@@ -424,13 +502,13 @@
   async function setPin() {
     const pin = [1,2,3,4].map(i => document.getElementById('pin' + i).value).join('');
     if (pin.length !== 4) { document.getElementById('pinMsg').textContent = 'Enter all 4 digits'; document.getElementById('pinMsg').className = 'pin-msg error'; return; }
-    const btn = document.getElementById('setPinBtn'); btn.disabled = true;
+    const btn = document.getElementById('setPinBtn'); btn.disabled = true; btn.textContent = 'Setting...';
     try {
       await api('POST', '/auth/set-pin', { pin });
       [1,2,3,4].forEach(i => document.getElementById('pin' + i).value = '');
       showSection('dash'); loadWallet();
     } catch (e) { document.getElementById('pinMsg').textContent = e.message; document.getElementById('pinMsg').className = 'pin-msg error'; }
-    btn.disabled = false;
+    btn.disabled = false; btn.textContent = 'Create PIN';
   }
 
   function loadWallet() {
@@ -445,7 +523,7 @@
     const icon = document.getElementById('eyeToggle');
     balanceHidden = !balanceHidden;
     if (balanceHidden) {
-      el.innerHTML = '₦ •••••• <span class="arrow"><i class="fas fa-chevron-right"></i></span>';
+      el.innerHTML = '₦ ••••••';
       el.classList.add('masked');
       icon.className = 'fas fa-eye-slash eye-toggle';
     } else {
@@ -456,7 +534,13 @@
   }
 
   function scrollToTransactions() {
-    document.getElementById('recentTxSection').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('.recent-tx').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function navigateNav(tab) {
+    ['home','rewards','finance','cards','me'].forEach(t => {
+      document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    });
   }
 
   async function refreshBalance() {
@@ -464,7 +548,7 @@
     try {
       const data = await api('GET', '/wallet/balance');
       const bal = Number(data.balance);
-      document.getElementById('balanceDisplay').innerHTML = '\u20A6' + bal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' <span class="arrow"><i class="fas fa-chevron-right"></i></span>';
+      document.getElementById('balanceDisplay').textContent = '\u20A6' + bal.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
     } catch (e) { if (e.message === 'Unauthorized') logout(); }
   }
 
@@ -475,11 +559,17 @@
       if (!txs.length) { container.innerHTML = '<div class="tx-empty"><i class="fas fa-receipt"></i><p>No transactions yet</p></div>'; return; }
       container.innerHTML = txs.map(tx => {
         const isDebit = tx.type === 'SEND' || tx.type === 'WITHDRAW';
-        const iconClass = tx.type === 'DEPOSIT' ? 'deposit' : 'send';
-        const icon = tx.type === 'DEPOSIT' ? 'fa-arrow-down' : 'fa-arrow-up';
-        const date = new Date(tx.createdAt).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-        const desc = tx.type === 'DEPOSIT' ? 'Deposit' : tx.type === 'SEND' ? 'Transfer to ' + (tx.counterparty || 'User') : 'Withdrawal';
-        return `<div class="tx-item"><div class="tx-icon ${iconClass}"><i class="fas ${icon}"></i></div><div class="tx-info"><div class="tx-type">${desc}</div><div class="tx-date">${date}</div></div><div class="tx-right"><div class="tx-amount ${isDebit ? 'debit' : 'credit'}">${isDebit ? '-' : '+'}\u20A6${Number(tx.amount).toLocaleString()}</div><div class="tx-status">Successful</div></div></div>`;
+        let iconClass, icon, desc;
+        if (tx.type === 'DEPOSIT') { iconClass = 'green'; icon = 'fa-arrow-down'; desc = 'Deposit'; }
+        else if (tx.type === 'SEND') { iconClass = 'purple'; icon = 'fa-paper-plane-top'; desc = 'Transfer to ' + (tx.counterparty || 'User'); }
+        else if (tx.type === 'WITHDRAW') { iconClass = 'amber'; icon = 'fa-arrow-up'; desc = 'Withdrawal'; }
+        else { iconClass = 'blue'; icon = 'fa-arrows-rotate'; desc = tx.type; }
+        const date = new Date(tx.createdAt);
+        const today = new Date();
+        const isToday = date.toDateString() === today.toDateString();
+        const dateStr = isToday ? 'Today' : date.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+        return `<div class="tx-item"><div class="tx-icon ${iconClass}"><i class="fas ${icon}"></i></div><div class="tx-info"><div class="tx-type">${desc}</div><div class="tx-desc">${dateStr} at ${timeStr}</div></div><div class="tx-right"><div class="tx-amount ${isDebit ? 'debit' : 'credit'}">${isDebit ? '-' : '+'}\u20A6${Number(tx.amount).toLocaleString()}</div><div class="tx-date">Success</div></div></div>`;
       }).join('');
     } catch (e) { if (e.message === 'Unauthorized') logout(); }
   }
@@ -493,24 +583,26 @@
     document.getElementById('modalMsg').className = 'modal-msg';
     if (action === 'deposit') {
       title.innerHTML = '<i class="fas fa-arrow-down" style="color:#00A651"></i> Deposit';
-      sub.textContent = 'Add money to your wallet';
-      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Deposit</button>';
+      sub.textContent = 'Add money to your wallet balance';
+      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Enter amount (NGN)" min="1"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Deposit</button>';
     } else if (action === 'send') {
       title.innerHTML = '<i class="fas fa-paper-plane" style="color:#00A651"></i> Send Money';
-      sub.textContent = 'Enter your PIN to authorize';
-      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Send</button>';
+      sub.textContent = 'Enter recipient details and your PIN to authorize';
+      body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="text" id="modalRecipient" placeholder="Recipient name or email"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Send</button>';
     } else if (action === 'withdraw') {
       title.innerHTML = '<i class="fas fa-arrow-up" style="color:#f59e0b"></i> Withdraw';
-      sub.textContent = 'Enter your PIN to authorize';
+      sub.textContent = 'Withdraw funds from your wallet';
       body.innerHTML = '<input type="number" id="modalAmount" placeholder="Amount (NGN)" min="1"><input type="password" id="modalPin" placeholder="4-digit PIN" maxlength="4"><button class="modal-btn" id="modalActionBtn" onclick="executeAction()">Withdraw</button>';
     }
     overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal(e) {
     if (e && e.target !== document.getElementById('modalOverlay') && !e.target.closest('.modal-cancel')) return;
     document.getElementById('modalOverlay').classList.remove('active');
     document.getElementById('modalMsg').className = 'modal-msg';
+    document.body.style.overflow = '';
   }
 
   function showModalMsg(text, type) {
@@ -522,7 +614,7 @@
   async function executeAction() {
     const amount = parseFloat(document.getElementById('modalAmount').value);
     if (!amount || amount <= 0) return showModalMsg('Enter a valid amount', 'error');
-    const btn = document.getElementById('modalActionBtn'); btn.disabled = true;
+    const btn = document.getElementById('modalActionBtn'); btn.disabled = true; btn.textContent = 'Processing...';
     try {
       if (currentAction === 'deposit') {
         await api('POST', '/wallet/deposit', { amount });
@@ -530,13 +622,13 @@
       } else if (currentAction === 'send') {
         const recipient = document.getElementById('modalRecipient').value.trim();
         const pin = document.getElementById('modalPin').value;
-        if (!recipient) { showModalMsg('Enter a recipient name', 'error'); btn.disabled = false; return; }
-        if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; return; }
+        if (!recipient) { showModalMsg('Enter a recipient', 'error'); btn.disabled = false; btn.textContent = 'Send'; return; }
+        if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; btn.textContent = 'Send'; return; }
         await api('POST', '/wallet/send', { amount, recipient, pin });
         showModalMsg('Sent \u20A6' + amount.toLocaleString() + ' to ' + recipient, 'success');
       } else if (currentAction === 'withdraw') {
         const pin = document.getElementById('modalPin').value;
-        if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; return; }
+        if (!pin || pin.length !== 4) { showModalMsg('Enter your 4-digit PIN', 'error'); btn.disabled = false; btn.textContent = 'Withdraw'; return; }
         await api('POST', '/wallet/withdraw', { amount, pin });
         showModalMsg('Withdrew \u20A6' + amount.toLocaleString() + ' successfully', 'success');
       }
@@ -546,6 +638,7 @@
       refreshBalance(); refreshTx();
     } catch (e) { showModalMsg(e.message, 'error'); }
     btn.disabled = false;
+    btn.textContent = currentAction === 'deposit' ? 'Deposit' : currentAction === 'send' ? 'Send' : 'Withdraw';
   }
 </script>
 </body>
