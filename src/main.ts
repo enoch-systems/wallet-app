@@ -10,6 +10,8 @@ async function bootstrap() {
       'http://localhost:3001',
       'http://localhost:3000',
       'https://wallet-app-xqtq.onrender.com',
+      'https://wallet-app-nu-ten.vercel.app',
+      'https://wallet-app-khaki-two.vercel.app',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
