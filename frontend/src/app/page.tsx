@@ -276,7 +276,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
             Transaction History <ChevronRight className="w-3 h-3" />
           </span>
         </div>
-        <div className={`text-[36px] font-black tracking-tight relative z-10 mb-3.5 ${hideBalance ? "opacity-40 text-[28px] tracking-[4px]" : ""}`}>
+        <div className={`text-[36px] font-medium tracking-tight relative z-10 mb-3.5 ${hideBalance ? "opacity-40 text-[28px] tracking-[4px]" : ""}`}>
           {hideBalance ? "₦ ••••••" : `₦${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
         </div>
         <button onClick={() => setModal("deposit")}
