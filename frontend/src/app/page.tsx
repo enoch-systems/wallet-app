@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Wallet, Shield, Headset, ScanLine, Bell, Eye, EyeOff,
   ChevronRight, ArrowDown, ArrowUp, ArrowRightFromLine,
@@ -272,7 +273,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
               {hideBalance ? <EyeOff className="w-[14px] h-[14px]" /> : <Eye className="w-[14px] h-[14px]" />}
             </button>
           </div>
-          <span className="text-[13px] font-medium opacity-90 flex items-center gap-1 cursor-pointer">
+          <span className="text-[13px] font-medium opacity-90 flex items-center gap-1 cursor-pointer" onClick={() => window.location.href = '/transactions'}>
             Transaction History <ChevronRight className="w-3 h-3" />
           </span>
         </div>
@@ -290,7 +291,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
       <div className="mx-4 mt-3 bg-white rounded-2xl p-4">
         <div className="flex justify-between items-center mb-3.5">
           <h3 className="text-[15px] font-bold">Recent Transactions</h3>
-          <span className="text-[13px] text-[#00A651] font-semibold cursor-pointer">See All</span>
+          <span className="text-[13px] text-[#00A651] font-semibold cursor-pointer" onClick={() => window.location.href = '/transactions'}>See All</span>
         </div>
         {transactions.length === 0 ? (
           <div className="text-center py-6 text-gray-400">
