@@ -6,8 +6,15 @@ services:
     startCommand: npm run start:prod
     envVars:
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: wallet-app-db
+          property: connectionString
       - key: JWT_SECRET
         sync: false
       - key: PORT
         value: 3000
+
+  - type: postgres
+    name: wallet-app-db
+    plan: free
+    ipAllowList: [] # allows connections from any Render service within the same account
