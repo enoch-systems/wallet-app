@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { WalletModule } from './wallet/wallet.module';
@@ -18,9 +16,6 @@ require('dotenv').config();
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       ssl: { rejectUnauthorized: false },
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
     }),
     AuthModule,
     WalletModule,
