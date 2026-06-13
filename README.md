@@ -88,6 +88,13 @@ npm run start:dev
 
 The server starts at **http://localhost:3000**.
 
+## Live Demo
+
+The app is deployed and accessible at:
+**https://wallet-app-xe0z.onrender.com**
+
+> Note: Free instances spin down after inactivity. The first request may take up to 30 seconds to wake up.
+
 ## API Reference
 
 ### Authentication
