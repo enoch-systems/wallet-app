@@ -1,20 +1,27 @@
-import { Injectable, BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Wallet } from './wallet.entity';
 import { Transaction } from './transaction.entity';
 import { AuthService } from '../auth/auth.service';
+import { NotificationService } from '../notification/notification.service';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class WalletService {
+  private readonly logger = new Logger(WalletService.name);
+
   constructor(
     @InjectRepository(Wallet)
     private walletRepo: Repository<Wallet>,
     @InjectRepository(Transaction)
     private transactionRepo: Repository<Transaction>,
+    @InjectRepository(User)
+    private userRepo: Repository<User>,
     private dataSource: DataSource,
     private authService: AuthService,
+    private notificationService: NotificationService,
   ) {}
 
   async getOrCreateWallet(userId: number): Promise<Wallet> {
@@ -57,6 +64,9 @@ export class WalletService {
       await queryRunner.manager.save(transaction);
 
       await queryRunner.commitTransaction();
+
+      this.sendReceiptEmail(userId, 'DEPOSIT', amount, reference, Number(wallet.balance));
+
       return { balance: Number(wallet.balance), reference };
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -102,6 +112,9 @@ export class WalletService {
       await queryRunner.manager.save(transaction);
 
       await queryRunner.commitTransaction();
+
+      this.sendReceiptEmail(userId, 'SEND', amount, reference, Number(wallet.balance));
+
       return { balance: Number(wallet.balance), reference };
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -146,6 +159,9 @@ export class WalletService {
       await queryRunner.manager.save(transaction);
 
       await queryRunner.commitTransaction();
+
+      this.sendReceiptEmail(userId, 'WITHDRAW', amount, reference, Number(wallet.balance));
+
       return { balance: Number(wallet.balance), reference };
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -162,5 +178,15 @@ export class WalletService {
       where: { walletId: wallet.id },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  private async sendReceiptEmail(userId: number, type: string, amount: number, reference: string, balance: number) {
+    try {
+      const user = await this.userRepo.findOne({ where: { id: userId } });
+      if (!user) return;
+      await this.notificationService.sendTransactionReceipt(user.email, user.name, type, amount, reference, balance);
+    } catch (error: any) {
+      this.logger.warn(`Failed to send receipt email: ${error.message}`);
+    }
   }
 }
