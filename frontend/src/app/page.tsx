@@ -24,7 +24,6 @@ async function api(method: string, path: string, body?: Record<string, unknown>,
   return data;
 }
 
-// ─── Auth Screen ───────────────────────────────────────────────
 function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }) {
   const [tab, setTab] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -113,7 +112,6 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
   );
 }
 
-// ─── PIN Screen ────────────────────────────────────────────────
 function PinScreen({ onDone }: { onDone: () => void }) {
   const [pin, setPin] = useState(["", "", "", ""]);
   const [msg, setMsg] = useState("");
@@ -172,7 +170,6 @@ function PinScreen({ onDone }: { onDone: () => void }) {
   );
 }
 
-// ─── Dashboard ─────────────────────────────────────────────────
 function Dashboard({ token, userName, onLogout }: { token: string; userName: string; onLogout: () => void }) {
   const router = useRouter();
   const [balance, setBalance] = useState(0);
@@ -184,6 +181,7 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
   const [pin, setPin] = useState("");
   const [modalMsg, setModalMsg] = useState({ text: "", type: "" });
   const [loading, setLoading] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -376,13 +374,34 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
           { icon: <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>, label: "Cards" },
           { icon: <User className="w-5 h-5" />, label: "Me" },
         ].map((n) => (
-          <button key={n.label}
+          <button key={n.label} onClick={n.label === "Me" ? () => setShowLogout(true) : undefined}
             className={`nav-item flex flex-col items-center gap-0.5 px-3 py-1 rounded-xl bg-transparent border-none cursor-pointer ${n.active ? "active font-bold" : "text-gray-400 font-medium"}`}>
             {n.icon}
             <span className="text-[11px]">{n.label}</span>
           </button>
         ))}
       </div>
+
+      {/* ─── Logout Confirm Modal ─── */}
+      {showLogout && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-5"
+          onClick={() => setShowLogout(false)}>
+          <div className="bg-white rounded-3xl p-6 w-full max-w-[320px] text-center shadow-2xl modal-enter"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <User className="w-7 h-7 text-red-500" />
+            </div>
+            <h2 className="text-[18px] font-bold mb-1">Logout</h2>
+            <p className="text-[13px] text-gray-500 mb-6">Are you sure you want to logout?</p>
+            <div className="flex gap-3">
+              <button onClick={() => setShowLogout(false)}
+                className="flex-1 py-3 rounded-xl border border-gray-200 text-[14px] font-semibold text-gray-600 bg-transparent cursor-pointer">Cancel</button>
+              <button onClick={() => { onLogout(); setShowLogout(false); }}
+                className="flex-1 py-3 rounded-xl text-[14px] font-semibold text-white bg-red-500 cursor-pointer">Yes, Logout</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── Modal ─── */}
       {modal && (
@@ -433,7 +452,6 @@ function Dashboard({ token, userName, onLogout }: { token: string; userName: str
   );
 }
 
-// ─── Main Page ─────────────────────────────────────────────────
 export default function Home() {
   const [screen, setScreen] = useState<"auth" | "pin" | "dash">("auth");
   const [token, setToken] = useState("");
