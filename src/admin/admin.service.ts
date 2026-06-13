@@ -42,6 +42,21 @@ export class AdminService {
     });
   }
 
+  async getWallets() {
+    const wallets = await this.walletRepo.find();
+    const users = await this.userRepo.find();
+    return wallets.map(wallet => {
+      const user = users.find(u => u.id === wallet.userId);
+      return {
+        id: wallet.id,
+        userId: wallet.userId,
+        userName: user ? user.name : 'Unknown',
+        balance: Number(wallet.balance),
+        currency: wallet.currency,
+      };
+    });
+  }
+
   async getTransactions() {
     return this.transactionRepo.find({
       order: { createdAt: 'DESC' },

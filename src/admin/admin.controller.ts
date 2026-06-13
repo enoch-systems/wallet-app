@@ -19,6 +19,12 @@ export class AdminController {
     return this.adminService.getUsers();
   }
 
+  @Get('wallets')
+  async getWallets(@Req() req: any) {
+    if (!req.user.isAdmin) throw new UnauthorizedException('Admin access required');
+    return this.adminService.getWallets();
+  }
+
   @Get('transactions')
   async getTransactions(@Req() req: any) {
     if (!req.user.isAdmin) throw new UnauthorizedException('Admin access required');
