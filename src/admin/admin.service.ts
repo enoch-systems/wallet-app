@@ -34,7 +34,7 @@ export class AdminService {
       return {
         id: user.id,
         name: user.name,
-        email: user.email,
+        phone: user.phone,
         isAdmin: user.isAdmin,
         balance: wallet ? Number(wallet.balance) : 0,
         createdAt: user.createdAt,

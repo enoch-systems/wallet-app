@@ -184,7 +184,7 @@ export class WalletService {
     try {
       const user = await this.userRepo.findOne({ where: { id: userId } });
       if (!user) return;
-      await this.notificationService.sendTransactionReceipt(user.email, user.name, type, amount, reference, balance);
+      await this.notificationService.sendTransactionReceipt(user.phone, user.name, type, amount, reference, balance);
     } catch (error: any) {
       this.logger.warn(`Failed to send receipt email: ${error.message}`);
     }
