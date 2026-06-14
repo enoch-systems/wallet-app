@@ -1,27 +1,41 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Wallet, Shield, Headset, ScanLine, Bell, Eye, EyeOff,
   ChevronRight, ArrowDown, ArrowUp, ArrowRightFromLine,
   Building, User, Receipt, Signal, Wifi, Trophy, Tv,
   Lock, HandCoins, Gift, MoreHorizontal, CircleCheck, Check,
-  Phone, Mail, ChevronDown, ChevronLeft, Loader2, AlertCircle, X, Info, KeyRound, ArrowLeft
+  Loader2, AlertCircle, X, ArrowLeft
 } from "lucide-react";
 
 const API = "https://wallet-app-xqtq.onrender.com";
 
-async function api(method: string, path: string, body?: Record<string, unknown>, token?: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function api(method: string, path: string, body?: Record<string, unknown>, token?: string): Promise<any> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(API + path, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Request failed");
+  let res: Response;
+  try {
+    res = await fetch(API + path, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new Error("Network error. Please check your connection and try again.");
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let data: any;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Server error (${res.status}). Please try again later.`);
+  }
+  if (!res.ok) {
+    throw new Error(data?.message || `Request failed (${res.status})`);
+  }
   return data;
 }
 
@@ -50,6 +64,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
 
   const formattedPhone = phone ? phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3") : "";
   const isPhoneValid = phone.length === 10;
+  const phoneDigitCount = phone.length;
 
   /* ── API Submit ── */
   const handleLogin = async () => {
@@ -136,7 +151,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
               <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
                 <Wallet className="w-6 h-6 text-white" />
               </div>
-              <span className="text-[28px] font-[800] ml-1.5 text-gray-900">alleo</span>
+              <span className="text-[28px] font-[800] ml-1.5 text-gray-900">Walleo</span>
             </div>
           </div>
 
@@ -144,18 +159,31 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">{mode === "login" ? "Log in to your account" : "Create your account"}</h1>
 
           {/* Phone input */}
-          <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+          <div className="mb-2 animate-fade-up" style={{ animationDelay: "0.1s" }}>
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 border-r border-gray-300 pr-3">
                 <span className="text-[15px]">🇳🇬</span>
                 <span className="text-[14px] font-medium text-gray-600">+234</span>
               </div>
-              <input type="tel" placeholder="Enter your Mobile Number" maxLength={10} value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                className="w-full pl-[90px] pr-4 py-4 bg-gray-50 border-none rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#00A651]/30 transition-all"
-                autoFocus />
+              <input type="tel" placeholder="Enter 10-digit number" maxLength={10} value={phone}
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "").replace(/^0+/, "").slice(0, 10);
+                  setPhone(digits);
+                  setMsg({ text: "", type: "" });
+                }}
+                className={`w-full pl-[90px] pr-14 py-4 bg-gray-50 border-none rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 transition-all ${phone.length === 10 ? "ring-2 ring-[#00A651]/40" : "focus:ring-2 focus:ring-[#00A651]/30"}`}
+                autoFocus inputMode="numeric" />
+              {/* Digit counter */}
+              <div className={`absolute right-4 top-1/2 -translate-y-1/2 text-[13px] font-semibold transition-colors ${phoneDigitCount === 10 ? "text-[#00A651]" : "text-gray-400"}`}>
+                {phoneDigitCount}/10
+              </div>
             </div>
           </div>
+
+          {/* Helper text */}
+          <p className="text-[12px] text-gray-400 mb-3 pl-1">
+            Enter your 10-digit phone number (without leading zero)
+          </p>
 
           {msg.text && (
             <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-3 animate-slide-down">
@@ -167,7 +195,8 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           {/* Next button */}
           <button onClick={() => {
             if (!phone) { setMsg({ text: "Please enter your phone number", type: "error" }); return; }
-            if (phone.length < 10) { setMsg({ text: "Phone number must be 10 digits", type: "error" }); return; }
+            if (phone.length !== 10) { setMsg({ text: "Phone number must be exactly 10 digits", type: "error" }); return; }
+            if (!/^\d{10}$/.test(phone)) { setMsg({ text: "Phone number must contain only digits", type: "error" }); return; }
             setMsg({ text: "", type: "" });
             if (mode === "login") {
               setAuthStep("login-pin");
@@ -175,7 +204,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
               setAuthStep("reg-name");
             }
           }}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 active:scale-[0.98] ${isPhoneValid ? "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.3)]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 active:scale-[0.98] ${isPhoneValid ? "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.4)] scale-[1]" : "bg-[#D1EFE0] cursor-not-allowed opacity-70"}`}>
             NEXT
           </button>
 
