@@ -180,11 +180,6 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             </div>
           </div>
 
-          {/* Helper text */}
-          <p className="text-[12px] text-gray-400 mb-3 pl-1">
-            Enter your 10-digit phone number (without leading zero)
-          </p>
-
           {msg.text && (
             <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-3 animate-slide-down">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
