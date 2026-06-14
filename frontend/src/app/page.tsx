@@ -7,7 +7,7 @@ import {
   ChevronRight, ArrowDown, ArrowUp, ArrowRightFromLine,
   Building, User, Receipt, Signal, Wifi, Trophy, Tv,
   Lock, HandCoins, Gift, MoreHorizontal, CircleCheck, Check,
-  Phone, Mail, ChevronDown, Loader2, AlertCircle, X
+  Phone, Mail, ChevronDown, ChevronLeft, Loader2, AlertCircle, X, Info, KeyRound, ArrowLeft
 } from "lucide-react";
 
 const API = "https://wallet-app-xqtq.onrender.com";
@@ -25,67 +25,63 @@ async function api(method: string, path: string, body?: Record<string, unknown>,
   return data;
 }
 
-/* ─── OPay‑inspired Auth Screen ─── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   OPay‑inspired Multi‑Page Auth Screen
+   
+   Login flow:  Phone page → Password page → Success
+   Register flow: Phone page → Name page → Password page → Success
+   ═══════════════════════════════════════════════════════════════════════════ */
 function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }) {
-  const [tab, setTab] = useState<"login" | "register">("login");
+  // ── Navigation state ──
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [authStep, setAuthStep] = useState<"phone" | "password" | "reg-phone" | "reg-name" | "reg-password" | "success">("phone");
+
+  // ── Form data ──
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
+  // ── UI state ──
   const [msg, setMsg] = useState({ text: "", type: "" });
   const [loading, setLoading] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [focused, setFocused] = useState<string | null>(null);
-  const [step, setStep] = useState<"form" | "otp" | "success">("form");
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const phoneDisplay = phone ? `+234 ${phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3")}` : "";
+  const formattedPhone = phone ? phone.replace(/(\d{4})(\d{3})(\d{4})/, "$1 $2 $3") : "";
+  const isPhoneValid = phone.length === 11;
 
-  const handleSubmit = async () => {
+  /* ── API Submit ── */
+  const handleLogin = async () => {
     setLoading(true);
     setMsg({ text: "", type: "" });
     try {
-      if (tab === "register") {
-        if (!name || !phone || !email || !password) throw new Error("Please fill in all fields");
-        if (password.length < 6) throw new Error("Password must be at least 6 characters");
-        if (password.length < 8) throw new Error("Password must be at least 8 characters for security");
-        if (!agreeTerms) throw new Error("Please agree to the Terms & Conditions");
-        // Phone used as unique login identifier (formatted as email for API compatibility)
-        const data = await api("POST", "/auth/register", { name, email: `${phone}@walleo.app`, password });
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userName", data.user.name);
-        setStep("success");
-        setTimeout(() => onSuccess(data.token, data.user.name), 1500);
-      } else {
-        if (!phone || !password) throw new Error("Please enter your phone number and password");
-        const data = await api("POST", "/auth/login", { email: phone, password });
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userName", data.user.name);
-        setStep("success");
-        setTimeout(() => onSuccess(data.token, data.user.name), 1500);
-      }
+      const data = await api("POST", "/auth/login", { email: phone, password });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.user.name);
+      setAuthStep("success");
+      setTimeout(() => onSuccess(data.token, data.user.name), 1500);
     } catch (e: unknown) {
       setMsg({ text: e instanceof Error ? e.message : "Something went wrong", type: "error" });
     }
     setLoading(false);
   };
 
-  const handleOtpChange = (i: number, val: string) => {
-    if (!/^\d*$/.test(val)) return;
-    const newOtp = [...otp];
-    newOtp[i] = val.slice(-1);
-    setOtp(newOtp);
-    if (val && i < 5) {
-      otpRefs.current[i + 1]?.focus();
+  const handleRegister = async () => {
+    setLoading(true);
+    setMsg({ text: "", type: "" });
+    try {
+      if (!name.trim()) throw new Error("Please enter your full name");
+      if (password.length < 6) throw new Error("Password must be at least 6 characters");
+      if (!agreeTerms) throw new Error("Please agree to the Terms & Conditions");
+      const data = await api("POST", "/auth/register", { name: name.trim(), email: `${phone}@walleo.app`, password });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userName", data.user.name);
+      setAuthStep("success");
+      setTimeout(() => onSuccess(data.token, data.user.name), 1500);
+    } catch (e: unknown) {
+      setMsg({ text: e instanceof Error ? e.message : "Something went wrong", type: "error" });
     }
-  };
-
-  const handleOtpKeyDown = (i: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[i] && i > 0) {
-      otpRefs.current[i - 1]?.focus();
-    }
+    setLoading(false);
   };
 
   const passwordStrength = (pw: string) => {
@@ -96,20 +92,17 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     return { label: "Strong", color: "#00C853", width: "100%" };
   };
 
-  const strength = passwordStrength(password);
-
-  /* ─── Success overlay ─── */
-  if (step === "success") {
+  /* ─── SUCCESS SCREEN ─── */
+  if (authStep === "success") {
     return (
-      <div className="min-h-screen flex items-center justify-center p-5"
-        style={{ background: "linear-gradient(160deg, #00A651 0%, #007B3A 100%)" }}>
-        <div className="bg-white rounded-3xl p-10 w-full max-w-[380px] shadow-2xl text-center">
+      <div className="min-h-screen flex items-center justify-center p-5 bg-white">
+        <div className="text-center animate-fade-up">
           <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-5 animate-bounce-in">
             <div className="w-14 h-14 rounded-full bg-[#00A651] flex items-center justify-center">
               <Check className="w-7 h-7 text-white" />
             </div>
           </div>
-          <h2 className="text-[24px] font-[800] mb-2">{tab === "register" ? "Account Created!" : "Welcome Back!"}</h2>
+          <h2 className="text-[24px] font-[800] mb-2 text-gray-900">{mode === "register" ? "Account Created!" : "Welcome Back!"}</h2>
           <p className="text-[14px] text-gray-400">Redirecting to your dashboard...</p>
           <div className="mt-6 flex justify-center">
             <div className="w-8 h-8 border-2 border-[#00A651] border-t-transparent rounded-full animate-spin" />
@@ -119,194 +112,393 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     );
   }
 
-  /* ─── Form ─── */
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ background: "linear-gradient(160deg, #00A651 0%, #007B3A 100%)" }}>
-      {/* Decorative circles */}
-      <div className="absolute top-[-80px] right-[-80px] w-[260px] h-[260px] rounded-full bg-white/5" />
-      <div className="absolute bottom-[-60px] left-[-60px] w-[200px] h-[200px] rounded-full bg-white/5" />
-      <div className="absolute top-[40%] left-[-30px] w-[100px] h-[100px] rounded-full bg-white/5" />
+  /* ─── PAGE HEADER ─── */
+  const renderHeader = (title?: string) => (
+    <div className="flex items-center justify-between px-5 pt-4 pb-2 mb-2">
+      <button onClick={() => {
+        if (authStep === "password") { setAuthStep("phone"); setPassword(""); setMsg({ text: "", type: "" }); }
+        else if (authStep === "reg-name") { setAuthStep("reg-phone"); setMsg({ text: "", type: "" }); }
+        else if (authStep === "reg-password") { setAuthStep("reg-name"); setPassword(""); setMsg({ text: "", type: "" }); }
+        else { setMode("login"); setAuthStep("phone"); setPhone(""); setPassword(""); setName(""); setMsg({ text: "", type: "" }); }
+      }} className="bg-transparent border-none cursor-pointer p-1 text-gray-900">
+        <ArrowLeft className="w-6 h-6" />
+      </button>
+      <span className="text-[15px] font-semibold text-[#00A651] cursor-pointer hover:underline">Help</span>
+    </div>
+  );
 
-      <div className="bg-white rounded-[28px] p-7 sm:p-8 w-full max-w-[400px] shadow-[0_25px_60px_rgba(0,0,0,0.3)] relative z-10 animate-fade-up">
-        {/* Brand Header */}
-        <div className="text-center mb-7">
-          <div className="w-[60px] h-[60px] rounded-[16px] mx-auto mb-3.5 flex items-center justify-center shadow-lg relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
-            <div className="absolute inset-0 bg-white/10" />
-            <Wallet className="w-7 h-7 text-white relative z-10" />
-          </div>
-          <h1 className="text-[24px] font-[800] tracking-tight text-gray-900">Walleo</h1>
-          <p className="text-[13px] text-gray-400 mt-1 font-medium">Send, receive & manage your money</p>
-        </div>
+  /* ─── LOGIN: STEP 1 — PHONE NUMBER ─── */
+  if (authStep === "phone") {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {renderHeader()}
 
-        {/* Tab Switcher - OPay style */}
-        <div className="relative bg-gray-100 rounded-[14px] p-1 mb-7">
-          <div className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out"
-            style={{ transform: `translateX(${tab === "login" ? "0%" : "100%"})` }} />
-          {(["login", "register"] as const).map((t) => (
-            <button key={t} onClick={() => { setTab(t); setMsg({ text: "", type: "" }); }}
-              className="relative z-10 flex-1 py-2.5 rounded-[12px] text-[14px] font-semibold transition-all duration-200 bg-transparent border-none cursor-pointer"
-              style={{ color: tab === t ? "#00A651" : "#9CA3AF" }}>
-              {t === "login" ? "Sign In" : "Create Account"}
-            </button>
-          ))}
-        </div>
-
-        {/* Form Fields */}
-        <div className="flex flex-col gap-3.5">
-          {/* Name field (register only) */}
-          {tab === "register" && (
-            <div className="relative animate-slide-down">
-              <div className={`input-wrapper ${focused === "name" ? "input-focused" : ""}`}>
-                <div className="input-icon">
-                  <User className="w-[18px] h-[18px] text-gray-400" />
-                </div>
-                <input type="text" placeholder="Full name" value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onFocus={() => setFocused("name")}
-                  onBlur={() => setFocused(null)}
-                  className="app-input" />
+        <div className="flex-1 flex flex-col px-7 pt-6">
+          {/* Logo */}
+          <div className="text-center mb-8 animate-fade-up">
+            <div className="inline-flex items-center justify-center">
+              <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
+                <Wallet className="w-6 h-6 text-white" />
               </div>
+              <span className="text-[28px] font-[800] ml-1.5 text-gray-900">alleo</span>
             </div>
-          )}
+          </div>
 
-          {/* Phone field */}
-          <div className={`relative ${tab === "register" ? "animate-slide-down-delay-1" : ""}`}>
-            <div className={`input-wrapper ${focused === "phone" ? "input-focused" : ""}`}>
-              <div className="input-icon pl-2 pr-1 flex items-center gap-0.5 border-r border-gray-200 mr-1">
-                <span className="text-[14px]">🇳🇬</span>
-                <span className="text-[13px] font-medium text-gray-600">+234</span>
-                <ChevronDown className="w-3 h-3 text-gray-400" />
+          {/* Heading */}
+          <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">Log in to your account</h1>
+
+          {/* Phone input */}
+          <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 border-r border-gray-300 pr-3">
+                <span className="text-[15px]">🇳🇬</span>
+                <span className="text-[14px] font-medium text-gray-600">+234</span>
               </div>
-              <input type="tel" placeholder="Phone number" maxLength={11} value={phone}
+              <input type="tel" placeholder="Enter your Mobile Number" maxLength={11} value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
-                onFocus={() => setFocused("phone")}
-                onBlur={() => setFocused(null)}
-                className="app-input pl-2" />
+                className="w-full pl-[90px] pr-4 py-4 bg-gray-50 border-none rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#00A651]/30 transition-all"
+                autoFocus />
             </div>
           </div>
 
-          {/* Email field (register only) */}
-          {tab === "register" && (
-            <div className="relative animate-slide-down-delay-2">
-              <div className={`input-wrapper ${focused === "email" ? "input-focused" : ""}`}>
-                <div className="input-icon">
-                  <Mail className="w-[18px] h-[18px] text-gray-400" />
-                </div>
-                <input type="email" placeholder="Email address (optional)" value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setFocused("email")}
-                  onBlur={() => setFocused(null)}
-                  className="app-input" />
-              </div>
+          {msg.text && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-3 animate-slide-down">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {msg.text}
             </div>
           )}
 
-          {/* Password field */}
-          <div className={`relative ${tab === "register" ? "animate-slide-down-delay-3" : ""}`}>
-            <div className={`input-wrapper ${focused === "password" ? "input-focused" : ""}`}>
-              <div className="input-icon">
-                <Lock className="w-[18px] h-[18px] text-gray-400" />
-              </div>
-              <input type={showPassword ? "text" : "password"} placeholder="Password" value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setFocused("password")}
-                onBlur={() => setFocused(null)}
-                className="app-input" />
-              <button onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 transition-colors">
-                {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
-              </button>
-            </div>
-            {/* Password strength bar (register only) */}
-            {tab === "register" && password && (
-              <div className="mt-2 animate-slide-down">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all duration-500 ease-out"
-                      style={{ width: strength.width, background: strength.color }} />
-                  </div>
-                  <span className="text-[11px] font-semibold" style={{ color: strength.color }}>{strength.label}</span>
-                </div>
-                <ul className="mt-2 space-y-1">
-                  {[
-                    { label: "At least 8 characters", met: password.length >= 8 },
-                    { label: "Contains uppercase letter", met: /[A-Z]/.test(password) },
-                    { label: "Contains a number", met: /[0-9]/.test(password) },
-                  ].map((req, i) => (
-                    <li key={i} className="flex items-center gap-1.5 text-[11px]"
-                      style={{ color: req.met ? "#00A651" : "#9CA3AF" }}>
-                      <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center ${req.met ? "bg-green-50" : "bg-gray-100"}`}>
-                        {req.met ? <Check className="w-2.5 h-2.5 text-[#00A651]" /> : <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />}
-                      </div>
-                      {req.label}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Forgot password (login only) */}
-          {tab === "login" && (
-            <div className="text-right">
-              <button className="text-[12px] font-semibold text-[#00A651] hover:text-[#008C46] transition-colors bg-transparent border-none cursor-pointer">
-                Forgot Password?
-              </button>
-            </div>
-          )}
-
-          {/* Terms (register only) */}
-          {tab === "register" && (
-            <div className="flex items-start gap-2.5 mt-1 animate-slide-down-delay-4">
-              <button onClick={() => setAgreeTerms(!agreeTerms)}
-                className={`w-[18px] h-[18px] rounded-[4px] flex items-center justify-center flex-shrink-0 mt-0.5 transition-all border-2 cursor-pointer ${agreeTerms ? "bg-[#00A651] border-[#00A651]" : "border-gray-300 bg-white"}`}>
-                {agreeTerms && <Check className="w-3 h-3 text-white" />}
-              </button>
-              <p className="text-[11px] text-gray-500 leading-relaxed">
-                By creating an account, you agree to our{" "}
-                <span className="font-semibold text-[#00A651] cursor-pointer hover:underline">Terms of Service</span>{" "}
-                and{" "}
-                <span className="font-semibold text-[#00A651] cursor-pointer hover:underline">Privacy Policy</span>
-              </p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button onClick={handleSubmit} disabled={loading}
-            className="w-full py-3.5 rounded-[14px] text-[15px] font-semibold text-white relative overflow-hidden transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed hover:shadow-[0_4px_20px_rgba(0,166,81,0.4)] active:scale-[0.98] cursor-pointer border-none"
-            style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
-            <div className="absolute inset-0 bg-white/0 hover:bg-white/10 transition-all duration-300" />
-            {loading ? (
-              <span className="flex items-center justify-center gap-2.5">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                {tab === "login" ? "Signing in..." : "Creating account..."}
-              </span>
-            ) : (
-              tab === "login" ? "Sign In" : "Create Account"
-            )}
+          {/* Next button */}
+          <button onClick={() => {
+            if (!phone) { setMsg({ text: "Please enter your phone number", type: "error" }); return; }
+            if (phone.length < 11) { setMsg({ text: "Phone number must be 11 digits", type: "error" }); return; }
+            setMsg({ text: "", type: "" });
+            setAuthStep("password");
+          }}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${isPhoneValid ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            NEXT
           </button>
 
-          {/* Error / Success Message */}
-          {msg.text && (
-            <div className={`flex items-start gap-2 px-3.5 py-3 rounded-[12px] text-[13px] font-medium animate-slide-down ${msg.type === "error" ? "bg-red-50 text-red-600 border border-red-200" : "bg-green-50 text-green-600 border border-green-200"}`}>
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>{msg.text}</span>
-            </div>
-          )}
+          {/* Sign up link */}
+          <p className="text-center text-[14px] text-gray-500 mt-5">
+            Don't have an account?{" "}
+            <button onClick={() => { setMode("register"); setAuthStep("reg-phone"); setMsg({ text: "", type: "" }); }}
+              className="text-[#00A651] font-bold border-none bg-transparent cursor-pointer hover:underline text-[14px]">
+              Click here to Sign Up
+            </button>
+          </p>
         </div>
 
         {/* Footer */}
-        <div className="mt-6 pt-5 border-t border-gray-100">
-          <p className="text-center text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+        <div className="px-7 py-6 text-center">
+          <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
             <Shield className="w-3.5 h-3.5" />
-            Secured with end-to-end encryption • SEC licensed
+            Licensed by the <span className="font-bold">CBN</span> and insured by the <span className="font-bold">NDIC</span>
           </p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  /* ─── LOGIN: STEP 2 — PASSWORD ─── */
+  if (authStep === "password") {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {renderHeader()}
+
+        <div className="flex-1 flex flex-col px-7 pt-6">
+          {/* Avatar & phone display */}
+          <div className="flex flex-col items-center mb-8 animate-fade-up">
+            <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
+              <User className="w-10 h-10 text-[#00A651]" />
+            </div>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">{formattedPhone}</p>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>Welcome back!</h1>
+          <p className="text-[14px] text-gray-500 text-center mb-7 animate-fade-up" style={{ animationDelay: "0.1s" }}>Enter your 6-digit Password to log in</p>
+
+          {/* Password input */}
+          <div className="mb-4 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+            <input type={showPassword ? "text" : "password"} placeholder="Enter 6-digit Password" maxLength={6}
+              value={password} onChange={(e) => setPassword(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-center tracking-[8px] text-gray-900 outline-none placeholder:text-gray-400 placeholder:tracking-normal placeholder:text-center focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all"
+              autoFocus />
+          </div>
+
+          {msg.text && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-4 animate-slide-down">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {msg.text}
+            </div>
+          )}
+
+          {/* Forgot password */}
+          <div className="text-right mb-8">
+            <button className="text-[14px] font-semibold text-[#00A651] hover:underline bg-transparent border-none cursor-pointer">
+              Forgot Password?
+            </button>
+          </div>
+
+          {/* Login button */}
+          <button onClick={handleLogin} disabled={loading || password.length < 6}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || password.length < 6 ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#A8E6C1] hover:bg-[#96DDB3] cursor-pointer"}`}>
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Logging in...
+              </span>
+            ) : "Log in"}
+          </button>
+        </div>
+
+        {/* Secure Keypad label */}
+        <div className="px-7 py-5 border-t border-gray-100">
+          <p className="text-center text-[12px] text-gray-400 flex items-center justify-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-[#00A651]" />
+            Walleo Secure Numeric Keypad
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── REGISTER: STEP 1 — PHONE NUMBER ─── */
+  if (authStep === "reg-phone") {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {renderHeader()}
+
+        <div className="flex-1 flex flex-col px-7 pt-6">
+          {/* Logo */}
+          <div className="text-center mb-8 animate-fade-up">
+            <div className="inline-flex items-center justify-center">
+              <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
+                <Wallet className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[28px] font-[800] ml-1.5 text-gray-900">alleo</span>
+            </div>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">Create your account</h1>
+
+          {/* Phone input */}
+          <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 border-r border-gray-300 pr-3">
+                <span className="text-[15px]">🇳🇬</span>
+                <span className="text-[14px] font-medium text-gray-600">+234</span>
+              </div>
+              <input type="tel" placeholder="Enter your Mobile Number" maxLength={11} value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                className="w-full pl-[90px] pr-4 py-4 bg-gray-50 border-none rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#00A651]/30 transition-all"
+                autoFocus />
+            </div>
+          </div>
+
+          {msg.text && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-3 animate-slide-down">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {msg.text}
+            </div>
+          )}
+
+          {/* Next button */}
+          <button onClick={() => {
+            if (!phone) { setMsg({ text: "Please enter your phone number", type: "error" }); return; }
+            if (phone.length < 11) { setMsg({ text: "Phone number must be 11 digits", type: "error" }); return; }
+            setMsg({ text: "", type: "" });
+            setAuthStep("reg-name");
+          }}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${isPhoneValid ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            NEXT
+          </button>
+
+          {/* Sign in link */}
+          <p className="text-center text-[14px] text-gray-500 mt-5">
+            Already have an account?{" "}
+            <button onClick={() => { setMode("login"); setAuthStep("phone"); setMsg({ text: "", type: "" }); }}
+              className="text-[#00A651] font-bold border-none bg-transparent cursor-pointer hover:underline text-[14px]">
+              Sign In
+            </button>
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="px-7 py-6 text-center">
+          <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            Licensed by the <span className="font-bold">CBN</span> and insured by the <span className="font-bold">NDIC</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── REGISTER: STEP 2 — FULL NAME ─── */
+  if (authStep === "reg-name") {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {renderHeader()}
+
+        <div className="flex-1 flex flex-col px-7 pt-6">
+          {/* Avatar & phone display */}
+          <div className="flex flex-col items-center mb-6 animate-fade-up">
+            <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
+              <User className="w-10 h-10 text-[#00A651]" />
+            </div>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">{formattedPhone}</p>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>What's your name?</h1>
+          <p className="text-[14px] text-gray-500 text-center mb-7 animate-fade-up" style={{ animationDelay: "0.1s" }}>Enter your full legal name</p>
+
+          {/* Name input */}
+          <div className="mb-5 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+            <input type="text" placeholder="Enter your full name" value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all"
+              autoFocus />
+          </div>
+
+          {msg.text && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-4 animate-slide-down">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {msg.text}
+            </div>
+          )}
+
+          {/* Next button */}
+          <button onClick={() => {
+            if (!name.trim()) { setMsg({ text: "Please enter your full name", type: "error" }); return; }
+            setMsg({ text: "", type: "" });
+            setAuthStep("reg-password");
+          }}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${name.trim() ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            NEXT
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="px-7 py-6 text-center">
+          <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            Licensed by the <span className="font-bold">CBN</span> and insured by the <span className="font-bold">NDIC</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── REGISTER: STEP 3 — PASSWORD ─── */
+  if (authStep === "reg-password") {
+    const strength = passwordStrength(password);
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {renderHeader()}
+
+        <div className="flex-1 flex flex-col px-7 pt-6">
+          {/* Avatar & phone display */}
+          <div className="flex flex-col items-center mb-6 animate-fade-up">
+            <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
+              <User className="w-10 h-10 text-[#00A651]" />
+            </div>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">{formattedPhone}</p>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>Create a Password</h1>
+          <p className="text-[14px] text-gray-500 text-center mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>Choose a secure password for your account</p>
+
+          {/* Password input */}
+          <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+            <div className="relative">
+              <input type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-5 pr-12 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all" />
+              <button onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Password strength */}
+          {password && (
+            <div className="mb-4 animate-slide-down">
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all duration-500 ease-out"
+                    style={{ width: strength.width, background: strength.color }} />
+                </div>
+                <span className="text-[11px] font-semibold" style={{ color: strength.color }}>{strength.label}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "8+ chars", met: password.length >= 8 },
+                  { label: "Uppercase", met: /[A-Z]/.test(password) },
+                  { label: "Number", met: /[0-9]/.test(password) },
+                  { label: "Symbol", met: /[^A-Za-z0-9]/.test(password) },
+                ].map((req) => (
+                  <span key={req.label} className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full"
+                    style={{ background: req.met ? "#F0FDF4" : "#F3F4F6", color: req.met ? "#00A651" : "#9CA3AF" }}>
+                    <Check className="w-3 h-3" />
+                    {req.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {msg.text && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-4 animate-slide-down">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {msg.text}
+            </div>
+          )}
+
+          {/* Terms checkbox */}
+          <div className="flex items-start gap-2.5 mb-6">
+            <button onClick={() => setAgreeTerms(!agreeTerms)}
+              className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 transition-all border-2 cursor-pointer ${agreeTerms ? "bg-[#00A651] border-[#00A651]" : "border-gray-300 bg-white"}`}>
+              {agreeTerms && <Check className="w-3 h-3 text-white" />}
+            </button>
+            <p className="text-[12px] text-gray-500 leading-relaxed">
+              I agree to the{" "}
+              <span className="font-semibold text-[#00A651] cursor-pointer hover:underline">Terms of Service</span>{" "}
+              and{" "}
+              <span className="font-semibold text-[#00A651] cursor-pointer hover:underline">Privacy Policy</span>
+            </p>
+          </div>
+
+          {/* Create Account button */}
+          <button onClick={handleRegister}
+            disabled={loading || password.length < 6 || !agreeTerms}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || password.length < 6 || !agreeTerms ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#A8E6C1] hover:bg-[#96DDB3] cursor-pointer"}`}>
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Creating account...
+              </span>
+            ) : "Create Account"}
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="px-7 py-6 text-center">
+          <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            Licensed by the <span className="font-bold">CBN</span> and insured by the <span className="font-bold">NDIC</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 function PinScreen({ onDone }: { onDone: () => void }) {
@@ -340,28 +532,40 @@ function PinScreen({ onDone }: { onDone: () => void }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-5"
-      style={{ background: "linear-gradient(160deg, #00A651 0%, #007B3A 100%)" }}>
-      <div className="bg-white rounded-3xl p-8 w-full max-w-[400px] shadow-2xl text-center">
-        <div className="w-16 h-16 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-lg"
-          style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
-          <Shield className="w-7 h-7 text-white" />
+    <div className="min-h-screen bg-white flex flex-col">
+      <div className="flex items-center justify-between px-5 pt-4 pb-2 mb-2">
+        <button className="bg-transparent border-none cursor-pointer p-1 text-gray-900">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <span className="text-[15px] font-semibold text-[#00A651]">Help</span>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center px-7">
+        <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-5">
+          <Shield className="w-10 h-10 text-[#00A651]" />
         </div>
-        <h1 className="text-[22px] font-[800] mb-1.5">Set Your PIN</h1>
-        <p className="text-[13px] text-gray-500 mb-6">Create a 4-digit PIN to authorize transactions</p>
-        <div className="flex gap-3 justify-center mb-6">
+        <h1 className="text-[24px] font-[800] text-gray-900 mb-2 text-center">Set Your PIN</h1>
+        <p className="text-[14px] text-gray-500 text-center mb-8">Create a 4-digit PIN to authorize transactions</p>
+        <div className="flex gap-3.5 justify-center mb-8">
           {pin.map((v, i) => (
             <input key={i} id={`pin-${i}`} type="password" maxLength={1} value={v}
               onChange={(e) => handleChange(i, e.target.value)}
-              className="pin-dot" />
+              className="w-14 h-16 text-center text-[24px] font-bold border-2 border-gray-200 rounded-2xl outline-none bg-gray-50 transition-all focus:border-[#00A651] focus:bg-white focus:ring-2 focus:ring-[#00A651]/20" />
           ))}
         </div>
         <button onClick={submit} disabled={loading}
-          className="w-full py-3.5 rounded-xl text-[15px] font-semibold text-white transition-all disabled:opacity-50"
-          style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
+          className="w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
+          style={{ background: "linear-gradient(135deg, #A8E6C1, #00A651)" }}>
           {loading ? "Setting..." : "Set PIN"}
         </button>
-        {msg && <p className="text-red-500 text-[13px] mt-3">{msg}</p>}
+        {msg && <p className="text-red-500 text-[13px] mt-4 text-center">{msg}</p>}
+      </div>
+
+      <div className="px-7 py-5 text-center">
+        <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+          <Shield className="w-3.5 h-3.5 text-[#00A651]" />
+          Walleo Secure Numeric Keypad
+        </p>
       </div>
     </div>
   );
