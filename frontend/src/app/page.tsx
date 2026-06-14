@@ -175,7 +175,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
               setAuthStep("reg-name");
             }
           }}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${isPhoneValid ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 active:scale-[0.98] ${isPhoneValid ? "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.3)]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
             NEXT
           </button>
 
@@ -251,7 +251,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
 
           {/* Login button */}
           <button onClick={handleLogin} disabled={loading || password.length < 6}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || password.length < 6 ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#A8E6C1] hover:bg-[#96DDB3] cursor-pointer"}`}>
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || password.length < 6 ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.3)] cursor-pointer"}`}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -312,7 +312,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             setMsg({ text: "", type: "" });
             setAuthStep("reg-pin");
           }}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${name.trim() ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 active:scale-[0.98] ${name.trim() ? "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.3)]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
             NEXT
           </button>
         </div>
@@ -368,7 +368,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             setMsg({ text: "", type: "" });
             setAuthStep("reg-confirm-pin");
           }}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${password.length === 6 ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 active:scale-[0.98] ${password.length === 6 ? "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.3)]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
             NEXT
           </button>
         </div>
@@ -437,7 +437,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           {/* Create Account button */}
           <button onClick={handleRegister}
             disabled={loading || confirmPassword.length !== 6 || password !== confirmPassword}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || confirmPassword.length !== 6 || password !== confirmPassword ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#A8E6C1] hover:bg-[#96DDB3] cursor-pointer"}`}>
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || confirmPassword.length !== 6 || password !== confirmPassword ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#00A651] hover:bg-[#008C46] shadow-[0_4px_15px_rgba(0,166,81,0.3)] cursor-pointer"}`}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader2 className="w-5 h-5 animate-spin" />
