@@ -13,42 +13,42 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(name: string, email: string, password: string) {
-    const existing = await this.userRepo.findOne({ where: { email } });
+  async register(name: string, phone: string, password: string) {
+    const existing = await this.userRepo.findOne({ where: { phone } });
     if (existing) {
-      throw new ConflictException('Email already registered');
+      throw new ConflictException('Phone number already registered');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const userCount = await this.userRepo.count();
     const isAdmin = userCount === 0;
-    const user = this.userRepo.create({ name, email, password: hashedPassword, isAdmin });
+    const user = this.userRepo.create({ name, phone, password: hashedPassword, isAdmin });
     await this.userRepo.save(user);
 
-    const token = this.jwtService.sign({ userId: user.id, email: user.email });
+    const token = this.jwtService.sign({ userId: user.id, phone: user.phone });
 
     return {
       token,
-      user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin },
+      user: { id: user.id, name: user.name, phone: user.phone, isAdmin: user.isAdmin },
     };
   }
 
-  async login(email: string, password: string) {
-    const user = await this.userRepo.findOne({ where: { email } });
+  async login(phone: string, password: string) {
+    const user = await this.userRepo.findOne({ where: { phone } });
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid phone or password');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid phone or password');
     }
 
-    const token = this.jwtService.sign({ userId: user.id, email: user.email });
+    const token = this.jwtService.sign({ userId: user.id, phone: user.phone });
 
     return {
       token,
-      user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin },
+      user: { id: user.id, name: user.name, phone: user.phone, isAdmin: user.isAdmin },
     };
   }
 
@@ -73,4 +73,3 @@ export class AuthService {
     return bcrypt.compare(pin, user.pin);
   }
 }
-

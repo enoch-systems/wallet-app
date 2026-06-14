@@ -28,36 +28,38 @@ async function api(method: string, path: string, body?: Record<string, unknown>,
 /* ═══════════════════════════════════════════════════════════════════════════
    OPay‑inspired Multi‑Page Auth Screen
    
-   Login flow:  Phone page → Password page → Success
-   Register flow: Phone page → Name page → Password page → Success
+   Login flow:     Phone (10 digits) → 6-digit PIN Login → Success
+   Register flow:  Phone (10 digits) → Full Name → Create 6-digit PIN → Confirm 6-digit PIN → Success → Set Transaction PIN
    ═══════════════════════════════════════════════════════════════════════════ */
 function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }) {
   // ── Navigation state ──
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [authStep, setAuthStep] = useState<"phone" | "password" | "reg-phone" | "reg-name" | "reg-password" | "success">("phone");
+  const [authStep, setAuthStep] = useState<
+    "phone" | "login-pin" | "reg-name" | "reg-pin" | "reg-confirm-pin" | "success"
+  >("phone");
 
   // ── Form data ──
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(false);
 
   // ── UI state ──
   const [msg, setMsg] = useState({ text: "", type: "" });
   const [loading, setLoading] = useState(false);
 
-  const formattedPhone = phone ? phone.replace(/(\d{4})(\d{3})(\d{4})/, "$1 $2 $3") : "";
-  const isPhoneValid = phone.length === 11;
+  const formattedPhone = phone ? phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3") : "";
+  const isPhoneValid = phone.length === 10;
 
   /* ── API Submit ── */
   const handleLogin = async () => {
     setLoading(true);
     setMsg({ text: "", type: "" });
     try {
-      const data = await api("POST", "/auth/login", { email: phone, password });
+      const data = await api("POST", "/auth/login", { phone, password });
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", data.user.name);
+      localStorage.setItem("userPhone", data.user.phone);
       setAuthStep("success");
       setTimeout(() => onSuccess(data.token, data.user.name), 1500);
     } catch (e: unknown) {
@@ -71,25 +73,18 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     setMsg({ text: "", type: "" });
     try {
       if (!name.trim()) throw new Error("Please enter your full name");
-      if (password.length < 6) throw new Error("Password must be at least 6 characters");
-      if (!agreeTerms) throw new Error("Please agree to the Terms & Conditions");
-      const data = await api("POST", "/auth/register", { name: name.trim(), email: `${phone}@walleo.app`, password });
+      if (password.length !== 6) throw new Error("PIN must be exactly 6 digits");
+      if (password !== confirmPassword) throw new Error("PINs do not match");
+      const data = await api("POST", "/auth/register", { name: name.trim(), phone, password });
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", data.user.name);
+      localStorage.setItem("userPhone", data.user.phone);
       setAuthStep("success");
       setTimeout(() => onSuccess(data.token, data.user.name), 1500);
     } catch (e: unknown) {
       setMsg({ text: e instanceof Error ? e.message : "Something went wrong", type: "error" });
     }
     setLoading(false);
-  };
-
-  const passwordStrength = (pw: string) => {
-    if (!pw) return { label: "", color: "", width: "0%" };
-    const score = [pw.length >= 8, /[A-Z]/.test(pw), /[a-z]/.test(pw), /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)].filter(Boolean).length;
-    if (score <= 2) return { label: "Weak", color: "#EF4444", width: "33%" };
-    if (score <= 3) return { label: "Medium", color: "#F59E0B", width: "66%" };
-    return { label: "Strong", color: "#00C853", width: "100%" };
   };
 
   /* ─── SUCCESS SCREEN ─── */
@@ -113,13 +108,14 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
   }
 
   /* ─── PAGE HEADER ─── */
-  const renderHeader = (title?: string) => (
+  const renderHeader = () => (
     <div className="flex items-center justify-between px-5 pt-4 pb-2 mb-2">
       <button onClick={() => {
-        if (authStep === "password") { setAuthStep("phone"); setPassword(""); setMsg({ text: "", type: "" }); }
-        else if (authStep === "reg-name") { setAuthStep("reg-phone"); setMsg({ text: "", type: "" }); }
-        else if (authStep === "reg-password") { setAuthStep("reg-name"); setPassword(""); setMsg({ text: "", type: "" }); }
-        else { setMode("login"); setAuthStep("phone"); setPhone(""); setPassword(""); setName(""); setMsg({ text: "", type: "" }); }
+        if (authStep === "login-pin") { setAuthStep("phone"); setPassword(""); setMsg({ text: "", type: "" }); }
+        else if (authStep === "reg-name") { setAuthStep("phone"); setMsg({ text: "", type: "" }); }
+        else if (authStep === "reg-pin") { setAuthStep("reg-name"); setPassword(""); setMsg({ text: "", type: "" }); }
+        else if (authStep === "reg-confirm-pin") { setAuthStep("reg-pin"); setConfirmPassword(""); setMsg({ text: "", type: "" }); }
+        else { setMode("login"); setAuthStep("phone"); setPhone(""); setPassword(""); setConfirmPassword(""); setName(""); setMsg({ text: "", type: "" }); }
       }} className="bg-transparent border-none cursor-pointer p-1 text-gray-900">
         <ArrowLeft className="w-6 h-6" />
       </button>
@@ -127,7 +123,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     </div>
   );
 
-  /* ─── LOGIN: STEP 1 — PHONE NUMBER ─── */
+  /* ─── LOGIN: STEP 1 — PHONE NUMBER (10 digits) ─── */
   if (authStep === "phone") {
     return (
       <div className="min-h-screen bg-white flex flex-col">
@@ -145,7 +141,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           </div>
 
           {/* Heading */}
-          <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">Log in to your account</h1>
+          <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">{mode === "login" ? "Log in to your account" : "Create your account"}</h1>
 
           {/* Phone input */}
           <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.1s" }}>
@@ -154,8 +150,8 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
                 <span className="text-[15px]">🇳🇬</span>
                 <span className="text-[14px] font-medium text-gray-600">+234</span>
               </div>
-              <input type="tel" placeholder="Enter your Mobile Number" maxLength={11} value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+              <input type="tel" placeholder="Enter your Mobile Number" maxLength={10} value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                 className="w-full pl-[90px] pr-4 py-4 bg-gray-50 border-none rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#00A651]/30 transition-all"
                 autoFocus />
             </div>
@@ -171,21 +167,33 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           {/* Next button */}
           <button onClick={() => {
             if (!phone) { setMsg({ text: "Please enter your phone number", type: "error" }); return; }
-            if (phone.length < 11) { setMsg({ text: "Phone number must be 11 digits", type: "error" }); return; }
+            if (phone.length < 10) { setMsg({ text: "Phone number must be 10 digits", type: "error" }); return; }
             setMsg({ text: "", type: "" });
-            setAuthStep("password");
+            if (mode === "login") {
+              setAuthStep("login-pin");
+            } else {
+              setAuthStep("reg-name");
+            }
           }}
             className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${isPhoneValid ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
             NEXT
           </button>
 
-          {/* Sign up link */}
+          {/* Sign up / Sign in link */}
           <p className="text-center text-[14px] text-gray-500 mt-5">
-            Don't have an account?{" "}
-            <button onClick={() => { setMode("register"); setAuthStep("reg-phone"); setMsg({ text: "", type: "" }); }}
-              className="text-[#00A651] font-bold border-none bg-transparent cursor-pointer hover:underline text-[14px]">
-              Click here to Sign Up
-            </button>
+            {mode === "login" ? (
+              <>Don't have an account?{" "}
+                <button onClick={() => { setMode("register"); setMsg({ text: "", type: "" }); }}
+                  className="text-[#00A651] font-bold border-none bg-transparent cursor-pointer hover:underline text-[14px]">
+                  Click here to Sign Up
+                </button></>
+            ) : (
+              <>Already have an account?{" "}
+                <button onClick={() => { setMode("login"); setMsg({ text: "", type: "" }); }}
+                  className="text-[#00A651] font-bold border-none bg-transparent cursor-pointer hover:underline text-[14px]">
+                  Sign In
+                </button></>
+            )}
           </p>
         </div>
 
@@ -200,8 +208,8 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     );
   }
 
-  /* ─── LOGIN: STEP 2 — PASSWORD ─── */
-  if (authStep === "password") {
+  /* ─── LOGIN: STEP 2 — 6‑DIGIT PIN ─── */
+  if (authStep === "login-pin") {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         {renderHeader()}
@@ -212,19 +220,19 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
               <User className="w-10 h-10 text-[#00A651]" />
             </div>
-            <p className="text-[16px] text-gray-500 font-medium tracking-wide">{formattedPhone}</p>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">+234 {formattedPhone}</p>
           </div>
 
           {/* Heading */}
           <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>Welcome back!</h1>
-          <p className="text-[14px] text-gray-500 text-center mb-7 animate-fade-up" style={{ animationDelay: "0.1s" }}>Enter your 6-digit Password to log in</p>
+          <p className="text-[14px] text-gray-500 text-center mb-7 animate-fade-up" style={{ animationDelay: "0.1s" }}>Enter your 6-digit PIN to log in</p>
 
-          {/* Password input */}
+          {/* Password/PIN input - 6 digits */}
           <div className="mb-4 animate-fade-up" style={{ animationDelay: "0.15s" }}>
-            <input type={showPassword ? "text" : "password"} placeholder="Enter 6-digit Password" maxLength={6}
+            <input type="password" placeholder="Enter 6-digit PIN" maxLength={6}
               value={password} onChange={(e) => setPassword(e.target.value.replace(/\D/g, "").slice(0, 6))}
               className="w-full px-5 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-center tracking-[8px] text-gray-900 outline-none placeholder:text-gray-400 placeholder:tracking-normal placeholder:text-center focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all"
-              autoFocus />
+              inputMode="numeric" autoComplete="one-time-code" autoFocus />
           </div>
 
           {msg.text && (
@@ -234,10 +242,10 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             </div>
           )}
 
-          {/* Forgot password */}
+          {/* Forgot PIN */}
           <div className="text-right mb-8">
             <button className="text-[14px] font-semibold text-[#00A651] hover:underline bg-transparent border-none cursor-pointer">
-              Forgot Password?
+              Forgot PIN?
             </button>
           </div>
 
@@ -264,79 +272,6 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     );
   }
 
-  /* ─── REGISTER: STEP 1 — PHONE NUMBER ─── */
-  if (authStep === "reg-phone") {
-    return (
-      <div className="min-h-screen bg-white flex flex-col">
-        {renderHeader()}
-
-        <div className="flex-1 flex flex-col px-7 pt-6">
-          {/* Logo */}
-          <div className="text-center mb-8 animate-fade-up">
-            <div className="inline-flex items-center justify-center">
-              <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00C853, #00A651)" }}>
-                <Wallet className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-[28px] font-[800] ml-1.5 text-gray-900">alleo</span>
-            </div>
-          </div>
-
-          {/* Heading */}
-          <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">Create your account</h1>
-
-          {/* Phone input */}
-          <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 border-r border-gray-300 pr-3">
-                <span className="text-[15px]">🇳🇬</span>
-                <span className="text-[14px] font-medium text-gray-600">+234</span>
-              </div>
-              <input type="tel" placeholder="Enter your Mobile Number" maxLength={11} value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
-                className="w-full pl-[90px] pr-4 py-4 bg-gray-50 border-none rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#00A651]/30 transition-all"
-                autoFocus />
-            </div>
-          </div>
-
-          {msg.text && (
-            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-3 animate-slide-down">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              {msg.text}
-            </div>
-          )}
-
-          {/* Next button */}
-          <button onClick={() => {
-            if (!phone) { setMsg({ text: "Please enter your phone number", type: "error" }); return; }
-            if (phone.length < 11) { setMsg({ text: "Phone number must be 11 digits", type: "error" }); return; }
-            setMsg({ text: "", type: "" });
-            setAuthStep("reg-name");
-          }}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${isPhoneValid ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
-            NEXT
-          </button>
-
-          {/* Sign in link */}
-          <p className="text-center text-[14px] text-gray-500 mt-5">
-            Already have an account?{" "}
-            <button onClick={() => { setMode("login"); setAuthStep("phone"); setMsg({ text: "", type: "" }); }}
-              className="text-[#00A651] font-bold border-none bg-transparent cursor-pointer hover:underline text-[14px]">
-              Sign In
-            </button>
-          </p>
-        </div>
-
-        {/* Footer */}
-        <div className="px-7 py-6 text-center">
-          <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
-            <Shield className="w-3.5 h-3.5" />
-            Licensed by the <span className="font-bold">CBN</span> and insured by the <span className="font-bold">NDIC</span>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   /* ─── REGISTER: STEP 2 — FULL NAME ─── */
   if (authStep === "reg-name") {
     return (
@@ -349,7 +284,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
               <User className="w-10 h-10 text-[#00A651]" />
             </div>
-            <p className="text-[16px] text-gray-500 font-medium tracking-wide">{formattedPhone}</p>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">+234 {formattedPhone}</p>
           </div>
 
           {/* Heading */}
@@ -375,7 +310,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           <button onClick={() => {
             if (!name.trim()) { setMsg({ text: "Please enter your full name", type: "error" }); return; }
             setMsg({ text: "", type: "" });
-            setAuthStep("reg-password");
+            setAuthStep("reg-pin");
           }}
             className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${name.trim() ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
             NEXT
@@ -393,9 +328,8 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
     );
   }
 
-  /* ─── REGISTER: STEP 3 — PASSWORD ─── */
-  if (authStep === "reg-password") {
-    const strength = passwordStrength(password);
+  /* ─── REGISTER: STEP 3 — CREATE 6‑DIGIT PIN ─── */
+  if (authStep === "reg-pin") {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         {renderHeader()}
@@ -406,49 +340,89 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
               <User className="w-10 h-10 text-[#00A651]" />
             </div>
-            <p className="text-[16px] text-gray-500 font-medium tracking-wide">{formattedPhone}</p>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">+234 {formattedPhone}</p>
           </div>
 
           {/* Heading */}
-          <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>Create a Password</h1>
-          <p className="text-[14px] text-gray-500 text-center mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>Choose a secure password for your account</p>
+          <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>Create a PIN</h1>
+          <p className="text-[14px] text-gray-500 text-center mb-7 animate-fade-up" style={{ animationDelay: "0.1s" }}>Your 6-digit secure login PIN</p>
 
-          {/* Password input */}
-          <div className="mb-3 animate-fade-up" style={{ animationDelay: "0.15s" }}>
-            <div className="relative">
-              <input type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 pr-12 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all" />
-              <button onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
+          {/* PIN input */}
+          <div className="mb-5 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+            <input type="password" placeholder="Enter 6-digit PIN" maxLength={6}
+              value={password} onChange={(e) => setPassword(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-center tracking-[8px] text-gray-900 outline-none placeholder:text-gray-400 placeholder:tracking-normal placeholder:text-center focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all"
+              inputMode="numeric" autoComplete="one-time-code" autoFocus />
           </div>
 
-          {/* Password strength */}
-          {password && (
+          {msg.text && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 text-[13px] font-medium mb-4 animate-slide-down">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {msg.text}
+            </div>
+          )}
+
+          {/* Next button */}
+          <button onClick={() => {
+            if (password.length !== 6) { setMsg({ text: "PIN must be exactly 6 digits", type: "error" }); return; }
+            setMsg({ text: "", type: "" });
+            setAuthStep("reg-confirm-pin");
+          }}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none cursor-pointer transition-all duration-300 ${password.length === 6 ? "bg-[#A8E6C1] hover:bg-[#96DDB3] active:scale-[0.98]" : "bg-[#D1EFE0] cursor-not-allowed"}`}>
+            NEXT
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="px-7 py-6 text-center">
+          <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            Licensed by the <span className="font-bold">CBN</span> and insured by the <span className="font-bold">NDIC</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── REGISTER: STEP 4 — CONFIRM 6‑DIGIT PIN ─── */
+  if (authStep === "reg-confirm-pin") {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {renderHeader()}
+
+        <div className="flex-1 flex flex-col px-7 pt-6">
+          {/* Avatar & phone display */}
+          <div className="flex flex-col items-center mb-6 animate-fade-up">
+            <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-4">
+              <User className="w-10 h-10 text-[#00A651]" />
+            </div>
+            <p className="text-[16px] text-gray-500 font-medium tracking-wide">+234 {formattedPhone}</p>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-[26px] font-[800] text-gray-900 mb-2 text-center animate-fade-up" style={{ animationDelay: "0.05s" }}>Confirm your PIN</h1>
+          <p className="text-[14px] text-gray-500 text-center mb-7 animate-fade-up" style={{ animationDelay: "0.1s" }}>Re-enter your 6-digit PIN to confirm</p>
+
+          {/* Confirm PIN input */}
+          <div className="mb-5 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+            <input type="password" placeholder="Re-enter 6-digit PIN" maxLength={6}
+              value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="w-full px-5 py-4 bg-gray-50 border-2 border-[#00A651]/40 rounded-2xl text-[16px] text-center tracking-[8px] text-gray-900 outline-none placeholder:text-gray-400 placeholder:tracking-normal placeholder:text-center focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 transition-all"
+              inputMode="numeric" autoComplete="one-time-code" autoFocus />
+          </div>
+
+          {/* PIN match indicator */}
+          {confirmPassword.length > 0 && (
             <div className="mb-4 animate-slide-down">
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-500 ease-out"
-                    style={{ width: strength.width, background: strength.color }} />
+              <div className="flex items-center gap-2">
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center ${password === confirmPassword ? "bg-green-50" : "bg-red-50"}`}>
+                  {password === confirmPassword
+                    ? <Check className="w-3.5 h-3.5 text-[#00A651]" />
+                    : <X className="w-3.5 h-3.5 text-red-500" />}
                 </div>
-                <span className="text-[11px] font-semibold" style={{ color: strength.color }}>{strength.label}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { label: "8+ chars", met: password.length >= 8 },
-                  { label: "Uppercase", met: /[A-Z]/.test(password) },
-                  { label: "Number", met: /[0-9]/.test(password) },
-                  { label: "Symbol", met: /[^A-Za-z0-9]/.test(password) },
-                ].map((req) => (
-                  <span key={req.label} className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full"
-                    style={{ background: req.met ? "#F0FDF4" : "#F3F4F6", color: req.met ? "#00A651" : "#9CA3AF" }}>
-                    <Check className="w-3 h-3" />
-                    {req.label}
-                  </span>
-                ))}
+                <span className={`text-[13px] font-medium ${password === confirmPassword ? "text-[#00A651]" : "text-red-500"}`}>
+                  {password === confirmPassword ? "PINs match" : "PINs do not match"}
+                </span>
               </div>
             </div>
           )}
@@ -460,24 +434,10 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
             </div>
           )}
 
-          {/* Terms checkbox */}
-          <div className="flex items-start gap-2.5 mb-6">
-            <button onClick={() => setAgreeTerms(!agreeTerms)}
-              className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 transition-all border-2 cursor-pointer ${agreeTerms ? "bg-[#00A651] border-[#00A651]" : "border-gray-300 bg-white"}`}>
-              {agreeTerms && <Check className="w-3 h-3 text-white" />}
-            </button>
-            <p className="text-[12px] text-gray-500 leading-relaxed">
-              I agree to the{" "}
-              <span className="font-semibold text-[#00A651] cursor-pointer hover:underline">Terms of Service</span>{" "}
-              and{" "}
-              <span className="font-semibold text-[#00A651] cursor-pointer hover:underline">Privacy Policy</span>
-            </p>
-          </div>
-
           {/* Create Account button */}
           <button onClick={handleRegister}
-            disabled={loading || password.length < 6 || !agreeTerms}
-            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || password.length < 6 || !agreeTerms ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#A8E6C1] hover:bg-[#96DDB3] cursor-pointer"}`}>
+            disabled={loading || confirmPassword.length !== 6 || password !== confirmPassword}
+            className={`w-full py-4 rounded-2xl text-[16px] font-bold text-white border-none transition-all duration-300 active:scale-[0.98] ${loading || confirmPassword.length !== 6 || password !== confirmPassword ? "bg-[#D1EFE0] cursor-not-allowed" : "bg-[#A8E6C1] hover:bg-[#96DDB3] cursor-pointer"}`}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -534,9 +494,7 @@ function PinScreen({ onDone }: { onDone: () => void }) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex items-center justify-between px-5 pt-4 pb-2 mb-2">
-        <button className="bg-transparent border-none cursor-pointer p-1 text-gray-900">
-          <ArrowLeft className="w-6 h-6" />
-        </button>
+        <div />
         <span className="text-[15px] font-semibold text-[#00A651]">Help</span>
       </div>
 
@@ -544,8 +502,8 @@ function PinScreen({ onDone }: { onDone: () => void }) {
         <div className="w-[80px] h-[80px] rounded-full bg-[#D5F5E3] flex items-center justify-center mb-5">
           <Shield className="w-10 h-10 text-[#00A651]" />
         </div>
-        <h1 className="text-[24px] font-[800] text-gray-900 mb-2 text-center">Set Your PIN</h1>
-        <p className="text-[14px] text-gray-500 text-center mb-8">Create a 4-digit PIN to authorize transactions</p>
+        <h1 className="text-[24px] font-[800] text-gray-900 mb-2 text-center">Create Transaction PIN</h1>
+        <p className="text-[14px] text-gray-500 text-center mb-8">Set a 4-digit PIN to authorize transactions</p>
         <div className="flex gap-3.5 justify-center mb-8">
           {pin.map((v, i) => (
             <input key={i} id={`pin-${i}`} type="password" maxLength={1} value={v}
@@ -877,6 +835,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userPhone");
     setToken("");
     setScreen("auth");
   };
