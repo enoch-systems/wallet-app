@@ -159,7 +159,7 @@ function AuthScreen({ onSuccess }: { onSuccess: (t: string, n: string) => void }
           <h1 className="text-[28px] font-[800] text-gray-900 mb-6 animate-fade-up">{mode === "login" ? "Log in to your account" : "Create your account"}</h1>
 
           {/* Phone input */}
-          <div className="mb-2 animate-fade-up" style={{ animationDelay: "0.1s" }}>
+          <div className="mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 border-r border-gray-300 pr-3">
                 <span className="text-[15px]">🇳🇬</span>
