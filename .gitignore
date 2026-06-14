@@ -1,7 +1,9 @@
 node_modules/
 dist/
+.next/
 wallet.db
 wallet.db-wal
 wallet.db-shm
 *.log
 .env
+.vercel

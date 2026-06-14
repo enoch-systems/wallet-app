@@ -4,6 +4,7 @@
   --green-primary: #00A651;
   --green-light: #00C853;
   --green-dark: #007B3A;
+  --green-gradient: linear-gradient(135deg, #00C853 0%, #00A651 100%);
   --bg-gray: #f0f0f0;
 }
 
@@ -21,13 +22,15 @@ body {
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 0; }
 
-/* Balance shimmer animation */
+/* ====== ANIMATIONS ====== */
+
+/* Shimmer effect */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-/* Slide up animation for modals */
+/* Slide up / fade up for modals & cards */
 @keyframes slideUp {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -35,7 +38,117 @@ body {
 
 .modal-enter { animation: slideUp 0.3s ease-out; }
 
-/* PIN input styling */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease-out;
+}
+
+/* Slide down with stagger */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.35s ease-out;
+}
+
+.animate-slide-down-delay-1 {
+  animation: slideDown 0.35s ease-out 0.05s both;
+}
+
+.animate-slide-down-delay-2 {
+  animation: slideDown 0.35s ease-out 0.1s both;
+}
+
+.animate-slide-down-delay-3 {
+  animation: slideDown 0.35s ease-out 0.15s both;
+}
+
+.animate-slide-down-delay-4 {
+  animation: slideDown 0.35s ease-out 0.2s both;
+}
+
+/* Bounce in for success check */
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.6s ease-out;
+}
+
+/* Pulse for loading */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 1.5s ease-in-out infinite;
+}
+
+/* ====== OPay-STYLE INPUTS ====== */
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 14px;
+  background: #F9FAFB;
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+.input-wrapper:focus-within,
+.input-wrapper.input-focused {
+  border-color: var(--green-primary);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(0, 166, 81, 0.08);
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 14px;
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+
+.app-input {
+  flex: 1;
+  padding: 12px 14px 12px 6px;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  background: transparent;
+  color: #111827;
+  min-width: 0;
+}
+
+.app-input::placeholder {
+  color: #9CA3AF;
+  font-weight: 400;
+}
+
+.app-input:-webkit-autofill,
+.app-input:-webkit-autofill:hover,
+.app-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px #F9FAFB inset !important;
+  -webkit-text-fill-color: #111827 !important;
+  border-radius: 14px;
+}
+
+/* ====== PIN INPUT STYLING ====== */
 .pin-dot {
   width: 56px;
   height: 64px;
@@ -53,7 +166,7 @@ body {
   box-shadow: 0 0 0 3px rgba(0,166,81,0.1);
 }
 
-/* Green gradient card */
+/* ====== BALANCE CARD ====== */
 .balance-gradient {
   background: linear-gradient(135deg, #00C853 0%, #00A651 50%, #008C46 100%);
   position: relative;
@@ -82,6 +195,8 @@ body {
   border-radius: 50%;
 }
 
+/* ====== INTERACTIVE ELEMENTS ====== */
+
 /* Service icon hover */
 .service-item:active {
   background: #f9fafb;
@@ -100,4 +215,73 @@ body {
 
 .nav-item.active {
   color: var(--green-primary);
+}
+
+/* ====== OTP INPUTS ====== */
+.otp-input {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  outline: none;
+  background: #F9FAFB;
+  transition: all 0.2s;
+  caret-color: var(--green-primary);
+}
+
+.otp-input:focus {
+  border-color: var(--green-primary);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(0,166,81,0.08);
+}
+
+.otp-input.filled {
+  border-color: var(--green-primary);
+  background: #F0FDF4;
+}
+
+/* ====== CUSTOM CHECKBOX ====== */
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid #D1D5DB;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  background: white;
+}
+
+.checkbox-custom.checked {
+  background: var(--green-primary);
+  border-color: var(--green-primary);
+}
+
+/* ====== BUTTON HOVER EFFECT ====== */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.3s;
+}
+
+.btn-primary:hover::after {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
 }
