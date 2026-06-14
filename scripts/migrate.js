@@ -1,6 +1,7 @@
 const { Client } = require('pg');
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
-const PG_URL = 'postgresql://wallet_2fpp_user:W1akUPUiiHqle0QmwzsWT5yK2txzCnj1@dpg-d8mfr0kvikkc73bqfoa0-a.frankfurt-postgres.render.com/wallet_2fpp?sslmode=require';
+const PG_URL = process.env.DATABASE_URL;
 
 async function resetDatabase() {
   const pg = new Client({ connectionString: PG_URL });
@@ -8,11 +9,11 @@ async function resetDatabase() {
   await pg.connect();
   console.log('Connected to PostgreSQL');
 
-  // Clear existing data
-  await pg.query('TRUNCATE TABLE "user", wallet, transaction RESTART IDENTITY');
-  console.log('Cleared all tables');
-  
-  // [Add any Postgres-specific initialization here]
+  // Drop all tables to clear old data
+  await pg.query('DROP SCHEMA public CASCADE');
+  await pg.query('CREATE SCHEMA public');
+  await pg.query('GRANT ALL ON SCHEMA public TO public');
+  console.log('Cleared all old tables');
   
   await pg.end();
   console.log('Database reset complete!');
